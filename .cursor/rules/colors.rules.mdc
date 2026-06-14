@@ -1,0 +1,55 @@
+---
+alwaysApply: false
+---
+# colors.rules.md
+
+### A. Purpose
+Govern all color usage in Khwarizmi interfaces. Enforce semantic color roles aligned with the Material 3 token system, ensuring visual consistency and WCAG AA compliance.
+
+### B. Rules
+- All colors MUST be referenced from the design token system only. No arbitrary hex values.
+- Token format: `--color-sf-{role}` (e.g. `--color-sf-primary`, `--color-sf-error`).
+- Semantic roles are mandatory:
+  - **Primary**: brand actions, active states, primary buttons
+  - **Secondary**: supporting actions, secondary buttons
+  - **Tertiary**: accents, highlights
+  - **Surface**: background of cards, dialogs, panels
+  - **Background**: page-level background
+  - **Error / Danger**: destructive actions, validation errors
+  - **Warning**: caution states, non-blocking alerts
+  - **Success**: completion, positive feedback
+  - **Info**: informational messages, neutral alerts
+  - **On-{role}**: text/icon color placed on top of the corresponding role
+- Light mode uses `:root` token values. Dark mode uses `.e-dark-mode` token values.
+- Color opacity variants must use the defined opacity tokens (e.g. `--color-sf-primary-opacity-8`), never inline alpha.
+- Surface elevation must use `--color-sf-surface`, `--color-sf-surface-variant`, and tint overlays — never manual lightening.
+- Chart/data series colors must use `--color-sf-Series-1` through `--color-sf-Series-14` only.
+- Minimum contrast ratio: 4.5:1 for body text, 3:1 for large text and UI components (WCAG AA).
+- `--color-sf-on-surface` must be used for all primary text on surface backgrounds.
+- `--color-sf-outline` and `--color-sf-outline-variant` must be used for all borders and dividers.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `--color-sf-primary` for all primary call-to-action elements.
+- ✅ Use `--color-sf-error` / `--color-sf-on-error-container` for validation errors.
+- ✅ Use `--color-sf-success-container` as background for success banners.
+- ✅ Apply `--color-sf-surface-variant` to distinguish sections within a surface.
+- ✅ Use semantic color names in all component code and design specs.
+- ✅ Switch to dark-mode token set when `.e-dark-mode` class is present.
+
+**Don't:**
+- ❌ Do not use hardcoded hex values, RGB literals, or color names (e.g. `#6750A4`, `purple`).
+- ❌ Do not use primary color for informational or neutral messages.
+- ❌ Do not mix light and dark token sets on the same screen.
+- ❌ Do not create new color roles without design system approval.
+- ❌ Do not use opacity via `rgba()` inline — use opacity tokens.
+- ❌ Do not use `--color-sf-Series-*` colors for UI states (buttons, badges, alerts).
+
+### D. MCP Usage Guidance
+- When generating any UI element, resolve color values exclusively from the token files: `material3-tokens.json` (light) and `material3-dark-tokens.json` (dark).
+- When context includes `.e-dark-mode`, switch all token references to the dark set.
+- For status indicators (badges, alerts, toasters), automatically map to the correct semantic role: error → danger, caution → warning, check → success, information → info.
+- Never suggest a color not in the token system. If no token maps to a use case, flag it for design system team review.
+
+---

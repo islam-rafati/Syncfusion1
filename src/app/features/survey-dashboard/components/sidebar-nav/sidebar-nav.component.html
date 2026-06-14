@@ -1,0 +1,25 @@
+<!-- Sidebar: scrollable nav list on top, Logout pinned at the bottom. -->
+<nav class="sidebar" aria-label="Main navigation">
+  <ul class="sidebar__list">
+    @for (item of items; track item.label) {
+      <li>
+        <button
+          type="button"
+          class="sidebar__item"
+          [class.sidebar__item--active]="active() === item.label"
+          [attr.aria-current]="active() === item.label ? 'page' : null"
+          (click)="onSelect(item.label)"
+        >
+          <app-icon [name]="item.icon" [size]="18" />
+          <span class="sidebar__label">{{ item.label }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+
+  <!-- Logout pinned to the bottom (red). -->
+  <button type="button" class="sidebar__item sidebar__item--logout">
+    <app-icon name="logout" [size]="18" />
+    <span class="sidebar__label">Logout</span>
+  </button>
+</nav>

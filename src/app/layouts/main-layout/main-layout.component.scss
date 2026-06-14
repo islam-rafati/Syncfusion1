@@ -1,0 +1,41 @@
+// Shell wrapper: sidebar beside the main column.
+// RTL-aware via logical properties; all values from tokens.
+.layout {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background-color: var(--color-bg-neutral);
+
+  // Sidebar keeps its width; it should not shrink.
+  &__sidebar {
+    flex-shrink: 0;
+  }
+
+  // Main column stacks header over scrollable content.
+  &__main {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0; // allow content to shrink instead of overflowing
+  }
+
+  // Routed content area: centered with desktop padding.
+  &__content {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: var(--spacing-4xl);
+  }
+}
+
+// Mobile: stack the sidebar above the content and reduce padding.
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .layout__content {
+    padding: var(--spacing-xl);
+  }
+}

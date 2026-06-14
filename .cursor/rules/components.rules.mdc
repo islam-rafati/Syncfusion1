@@ -1,0 +1,164 @@
+---
+alwaysApply: false
+---
+
+# components.rules.md
+
+### A. Purpose
+Enforce consistent component usage across all Khwarizmi interfaces using the **Syncfusion UI Kit — Material-3 Theme** as the sole component library. No custom or third-party components are permitted.
+
+### B. Rules
+
+**Source of Truth:**
+- ALL UI components MUST come from the **Syncfusion UI Kit — Material-3 Theme** Figma library.
+- Figma Community file: `https://www.figma.com/community/file/1454123774600129202/syncfusion-ui-kit-material-3-theme`
+- In code, use the corresponding **Syncfusion React / JS / Blazor / Angular** component that maps to the Figma design.
+- No custom-built components, no shadcn, no MUI, no Ant Design — Syncfusion only.
+- All Syncfusion components must use the **Material-3 theme CSS** (`material3.css` or the customized output from Theme Studio).
+
+**Component-to-Syncfusion Mapping:**
+
+Buttons:
+- Button → `SfButton` (variant: Contained / Outlined / Text)
+- Icon Button → `SfButton` with icon-only class
+- Button Group → `SfButtonGroup`
+- Dropdown Button → `SfDropDownButton`
+- Split Button → `SfSplitButton`
+- FAB → `SfFab`
+- Speed Dial → `SfSpeedDial`
+- Chips → `SfChip` / `SfChipList`
+- Spinner → `SfSpinner`
+
+Inputs:
+- TextBox → `SfTextBox`
+- Text Area → `SfTextBox` (multiline)
+- Input Mask → `SfMaskedTextBox`
+- Numeric Textbox → `SfNumericTextBox`
+- Password Textbox → `SfTextBox` (type: password)
+- Radio Button → `SfRadioButton`
+- CheckBox → `SfCheckBox`
+- Color Picker → `SfColorPicker`
+- File Upload → `SfUploader`
+- Range Slider → `SfSlider`
+- Toggle Switch → `SfSwitch`
+- Signature Pad → `SfSignature`
+- Rating → `SfRating`
+- OTP → `SfOtpInput`
+
+Navigation:
+- Accordion → `SfAccordion`
+- App Bar → `SfAppBar`
+- Breadcrumb → `SfBreadcrumb`
+- Carousel → `SfCarousel`
+- Context Menu → `SfContextMenu`
+- Menu Bar → `SfMenu`
+- Side Bar → `SfSidebar`
+- Tabs → `SfTab`
+- Toolbar → `SfToolbar`
+- Tree View → `SfTreeView`
+- Stepper → `SfStepper`
+
+Notifications:
+- Message → `SfMessage`
+- Badge → `SfBadge`
+- Toaster → `SfToast`
+- Progress Bar → `SfProgressBar`
+- Skeleton → `SfSkeleton`
+
+Dropdowns:
+- AutoComplete → `SfAutoComplete`
+- Combo Box → `SfComboBox`
+- Dropdown List → `SfDropDownList`
+- Dropdown Tree → `SfDropDownTree`
+- Multiselect Dropdown → `SfMultiSelect`
+- Mention → `SfMention`
+- List Box → `SfListBox`
+- Multicolumn Combobox → `SfMultiColumnComboBox`
+
+Layout:
+- Avatar → `SfAvatar`
+- Card → `SfCard`
+- Dialog Box → `SfDialog`
+- List View → `SfListView`
+- Predefined Dialog → `SfDialog` (Alert / Confirm / Prompt variants)
+- Splitter → `SfSplitter`
+- Timeline → `SfTimeline`
+- Tooltip → `SfTooltip`
+- Dashboard Layout → `SfDashboardLayout`
+
+Calendar:
+- Scheduler → `SfSchedule`
+- Calendar → `SfCalendar`
+- Date Picker → `SfDatePicker`
+- DateRange Picker → `SfDateRangePicker`
+- DateTime Picker → `SfDateTimePicker`
+- Time Picker → `SfTimePicker`
+- Gantt → `SfGantt`
+
+File Viewers / Editors:
+- Inplace Editor → `SfInPlaceEditor`
+- PDF Viewer → `SfPdfViewer`
+- Rich Text Editor → `SfRichTextEditor`
+- Document Editor → `SfDocumentEditor`
+- Image Editor → `SfImageEditor`
+
+Grids:
+- Data Grid → `SfGrid`
+- Pager → `SfPager`
+- Pivot Grid → `SfPivotView`
+- Tree Grid → `SfTreeGrid`
+- SpreadSheet → `SfSpreadsheet`
+
+Forms:
+- Query Builder → `SfQueryBuilder`
+- Form Validation → `FormValidator`
+
+Interactive Chat:
+- AI AssistView → `SfAIAssistView`
+- Chat → `SfChatUI`
+
+Data Visualizations:
+- Charts → `SfChart` / `SfAccumulationChart`
+- Barcode → `SfBarcodeGenerator`
+- Kanban → `SfKanban`
+
+**Theme Application:**
+- All Syncfusion components use the Material-3 theme: import `@syncfusion/ej2/material3.css`
+- Dark mode: add `.e-dark-mode` class to the root element — Syncfusion Material-3 responds automatically.
+- Custom token overrides go through Theme Studio or CSS variable overrides using the `--color-sf-*` token system.
+
+**Component States:**
+- Every component must render all Syncfusion built-in states: default, hover, focused, active, disabled, loading.
+- Do not override Syncfusion state styles — use token overrides only.
+- Disabled state is handled by Syncfusion via the `disabled` prop — do not manually grey out.
+
+**Accessibility:**
+- All Syncfusion Material-3 components are WCAG 2.2 / Section 508 / WAI-ARIA compliant by default.
+- Do not remove ARIA attributes added by Syncfusion.
+- Keyboard navigation is built into all Syncfusion components — do not reimplement it.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use Syncfusion Material-3 Figma Kit components in all design files.
+- ✅ Map every Figma component 1:1 to its Syncfusion React/JS code counterpart.
+- ✅ Apply Material-3 theme CSS globally — never per-component.
+- ✅ Use Theme Studio to generate custom theme CSS from modified tokens.
+- ✅ Use `.e-dark-mode` class for dark theme switching.
+- ✅ Leverage Syncfusion's built-in RTL support via `enableRtl: true` globally.
+
+**Don't:**
+- ❌ Do not build custom components when a Syncfusion equivalent exists.
+- ❌ Do not use any other UI library (MUI, Ant, Chakra, shadcn, Radix).
+- ❌ Do not override Syncfusion internal class names directly.
+- ❌ Do not import Fluent, Bootstrap, or Tailwind theme — Material-3 only.
+- ❌ Do not disable Syncfusion's built-in accessibility attributes.
+- ❌ Do not use Syncfusion component markup outside its documented API.
+
+### D. MCP Usage Guidance
+- When generating any UI element, first identify its Syncfusion Material-3 component equivalent.
+- Reference the Syncfusion UI Kit Figma file for design specs: `https://www.figma.com/community/file/1454123774600129202`
+- When generating code, always use the Syncfusion component import path: `@syncfusion/ej2-react-*` (React) or `@syncfusion/ej2-*` (JS).
+- Enable RTL globally at app root: `L10n.load()` + `setCulture('ar')` + `enableRtl(true)` for Arabic interfaces.
+- Apply Material-3 CSS at root level — never inline per component.
+- When a Figma frame references a Syncfusion component, extract its variant/state from the Figma layer name and map it to the corresponding Syncfusion prop.

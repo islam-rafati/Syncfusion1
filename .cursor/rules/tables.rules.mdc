@@ -1,0 +1,83 @@
+---
+globs: globs: **/grid/**, **/*Table*, **/*Grid*
+alwaysApply: false
+---
+# tables.rules.mdc
+
+### A. Purpose
+Define all rules for data table design and behavior using Syncfusion Material-3 grid components exclusively.
+
+### B. Rules
+
+**Component Selection:**
+- All tabular data → `SfGrid` (Syncfusion Data Grid)
+- Hierarchical data → `SfTreeGrid`
+- Cross-tabular analytics → `SfPivotView`
+- Editable spreadsheet-style → `SfSpreadsheet`
+- Pagination control → `SfPager`
+
+**Structure:**
+- Column headers: Label style (11px, uppercase, semibold, `--color-sf-on-surface-variant`)
+- Row height: 40px compact / 48px default / 56px relaxed
+- Cell padding: 12px vertical, 16px horizontal
+- Alternating rows: `--color-sf-on-surface-opacity4` for alternate row (use `SfGrid` `enableAltRow` prop)
+- Selected row: `--color-sf-primary-opacity-8` (Syncfusion applies via Material-3 theme)
+- Hover row: `--color-sf-on-surface-opacity5` (handled by Material-3 theme)
+
+**Required SfGrid Features (always enable):**
+- Sorting: `allowSorting={true}`
+- Filtering: `allowFiltering={true}` with FilterBar or Menu filter
+- Pagination: `allowPaging={true}` with `SfPager`
+- Column resizing: `allowResizing={true}`
+- Column reorder: `allowReordering={true}`
+- RTL: handled globally via `enableRtl(true)`
+
+**Conditional Features (enable when applicable):**
+- Selection with bulk actions: `selectionSettings={{ type: 'Multiple', checkboxMode: 'ResetOnRowClick' }}`
+- Export (CSV / Excel / PDF): `SfGrid` toolbar with `['ExcelExport', 'CsvExport', 'PdfExport']`
+- Column chooser: `showColumnChooser={true}` when table > 8 columns
+- Frozen columns: `freeze` prop on identifier/name column when > 8 columns
+- Virtual scrolling: `enableVirtualization={true}` for datasets > 500 rows
+- Inline editing: `editSettings={{ allowEditing: true, mode: 'Normal' }}` using `SfInPlaceEditor`
+- Search: `toolbar={['Search']}` above the grid
+
+**Content Rules:**
+- Empty cells: display `—` (en dash) — set via `defaultValue` or template
+- Numbers: right-aligned in LTR, left-aligned (reading-end) in RTL
+- Text: right-aligned in RTL (automatic with `enableRtl`)
+- Dates: `DD/MM/YYYY` format for Arabic contexts — set via `SfGrid` column `format` prop
+- Status columns: use `SfBadge` or `SfChip` via column template — never raw text
+- Action columns: always last column (leftmost in RTL) — use `SfButton` icon-only or `SfContextMenu`
+- Max visible columns without column chooser: 10
+
+**Accessibility:**
+- `SfGrid` includes `role="grid"` and full ARIA support by default — do not remove.
+- Keyboard: Tab between cells, Arrow keys within grid, Enter to activate — built into `SfGrid`.
+- Sort announcement via `aria-sort` is handled automatically by Syncfusion.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfGrid` for all structured data — never custom `<table>` HTML.
+- ✅ Freeze the identifier column when > 8 columns.
+- ✅ Show row count and `SfPager` at bottom.
+- ✅ Use `SfBadge` or `SfChip` in status columns.
+- ✅ Enable column chooser for complex tables.
+- ✅ Use `SfGrid` export toolbar for report contexts.
+
+**Don't:**
+- ❌ Do not build custom table markup.
+- ❌ Do not display more than 10 unsorted columns without column chooser.
+- ❌ Do not use plain text in status columns.
+- ❌ Do not load all records without pagination or virtual scrolling.
+- ❌ Do not place full action button sets in every row — use `SfContextMenu` instead.
+- ❌ Do not override Syncfusion grid CSS classes directly.
+
+### D. MCP Usage Guidance
+- When generating a data table, default to `SfGrid` with sorting, filtering, and pagination enabled.
+- Auto-apply: Label headers, 48px row height, 12px/16px cell padding, RTL alignment via `enableRtl`.
+- When generating status columns, auto-generate `SfBadge` or `SfChip` template variants per status value.
+- For datasets > 500 rows, enable `enableVirtualization`.
+- For report contexts, add export toolbar: `['Search', 'ExcelExport', 'PdfExport', 'CsvExport']`.
+- Map Figma frame column specs to `SfGrid` column definitions: field, headerText, width, textAlign, template.
+- Always generate an empty state template for the grid using `SfSkeleton` during load.

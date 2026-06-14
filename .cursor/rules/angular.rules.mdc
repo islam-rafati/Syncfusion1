@@ -1,0 +1,383 @@
+---
+description: Angular 20+ architecture rules for Khwarizmi — standalone components, signals, TypeScript, SCSS
+alwaysApply: true
+---
+
+# angular.rules.mdc
+
+### A. Purpose
+Enforce Angular 20+ best practices across all Khwarizmi products. Every generated Angular artifact must be production-ready, strongly typed, and fully aligned with the Khwarizmi design system token and component rules.
+
+---
+
+### B. Framework Rules
+
+**Version & Mode:**
+- Angular 20+ only. No legacy NgModule-based architecture.
+- All components are standalone — `standalone: true` always.
+- Use Angular CLI with `--standalone` flag for all generated artifacts.
+- SSR is opt-in per product — do not assume it unless specified.
+
+**Component Declaration Template:**
+```typescript
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-feature-name',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    // Syncfusion modules here — see syncfusion.rules.mdc
+  ],
+  templateUrl: './feature-name.component.html',
+  styleUrl: './feature-name.component.scss',
+})
+export class FeatureNameComponent implements OnInit {
+  // Signals — reactive state
+  readonly items = signal<Item[]>([]);
+  readonly isLoading = signal(false);
+  readonly selectedItem = signal<Item | null>(null);
+
+  // Computed — derived state, never duplicated
+  readonly hasItems = computed(() => this.items().length > 0);
+  readonly isEmpty = computed(() => !this.isLoading() && !this.hasItems());
+
+  // Injection — always inject(), never constructor params
+  private readonly featureService = inject(FeatureService);
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  private loadData(): void {
+    // delegate to service — no HTTP in components
+  }
+}
+```
+
+---
+
+### C. TypeScript Rules
+
+**Types:**
+- Every variable, parameter, and return type must be explicitly typed.
+- `any` is forbidden — zero exceptions. Use `unknown` + type narrowing if needed.
+- `object` is forbidden as a type — always define an interface.
+- No type assertions (`as SomeType`) unless after explicit runtime validation.
+
+**Interfaces:**
+- All data shapes defined as interfaces in `models/feature.model.ts`.
+- Prefix with nothing — no `I` prefix (use `User`, not `IUser`).
+- Use `readonly` for properties that are never mutated after creation.
+
+```typescript
+// models/user.model.ts
+export interface User {
+  readonly id: string;
+  readonly name: string;
+  email: string;
+  role: UserRole;
+  createdAt: Date;
+}
+
+export type UserRole = 'admin' | 'manager' | 'viewer';
+```
+
+**Enums:**
+- Use `const` objects + union types instead of TypeScript enums.
+```typescript
+// ✅ Preferred
+export const UserStatus = {
+  Active: 'active',
+  Inactive: 'inactive',
+  Pending: 'pending',
+} as const;
+export type UserStatus = typeof UserStatus[keyof typeof UserStatus];
+```
+
+---
+
+### D. Signals Rules
+
+Use Angular Signals as the default reactive primitive. RxJS is for async streams (HTTP, WebSockets) only.
+
+**Signal patterns:**
+```typescript
+// State
+readonly count = signal(0);
+readonly users = signal<User[]>([]);
+readonly activeUser = signal<User | null>(null);
+
+// Computed (derived — never store computed values in plain signals)
+readonly userCount = computed(() => this.users().length);
+readonly activeUserName = computed(() => this.activeUser()?.name ?? '—');
+
+// Effect (side effects responding to signal changes)
+constructor() {
+  effect(() => {
+    // runs whenever activeUser() changes
+    const user = this.activeUser();
+    if (user) this.trackAnalytics(user.id);
+  });
+}
+
+// Mutation
+addUser(user: User): void {
+  this.users.update(current => [...current, user]);
+}
+
+removeUser(id: string): void {
+  this.users.update(current => current.filter(u => u.id !== id));
+}
+```
+
+**Rules:**
+- Prefer `signal()` over `BehaviorSubject` for local UI state.
+- Prefer `computed()` over storing derived values in separate signals.
+- Use `effect()` for side effects (analytics, localStorage sync) — never for data derivation.
+- Do not call `.set()` inside `computed()` — it causes circular dependencies.
+- For async data, use a service with `toSignal(observable$)` from `@angular/core/rxjs-interop`.
+
+---
+
+### E. Template Rules
+
+**Control Flow — always use new Angular 17+ syntax:**
+```html
+<!-- ✅ New syntax -->
+@if (isLoading()) {
+  <ejs-skeleton height="200px" />
+} @else if (isEmpty()) {
+  <app-empty-state />
+} @else {
+  <ejs-grid [dataSource]="items()" />
+}
+
+@for (item of items(); track item.id) {
+  <app-item-card [item]="item" (select)="onItemSelect($event)" />
+}
+
+@switch (userRole()) {
+  @case ('admin') { <app-admin-panel /> }
+  @case ('manager') { <app-manager-panel /> }
+  @default { <app-viewer-panel /> }
+}
+
+@defer (on viewport) {
+  <ejs-chart [dataSource]="chartData()" />
+} @placeholder {
+  <ejs-skeleton height="300px" />
+}
+```
+
+**❌ Never use old syntax:**
+```html
+<!-- Forbidden -->
+*ngIf="condition"
+*ngFor="let item of items"
+*ngSwitch / *ngSwitchCase
+```
+
+**Binding rules:**
+- `[property]="expression"` for all dynamic values — never HTML attributes for dynamic binding.
+- `(event)="handler($event)"` for all event binding.
+- `[(ngModel)]` only for simple two-way binding — prefer reactive forms + signals.
+- No inline expressions with side effects in templates.
+- No method calls in templates that recompute on every change detection — use `computed()` instead.
+
+---
+
+### F. SCSS Rules
+
+All styling follows the Khwarizmi token system. See `tokens.rules.mdc` and `colors.rules.mdc` for the full token reference.
+
+**Component SCSS structure:**
+```scss
+// feature.component.scss
+
+// 1. Host-level layout
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+// 2. Component root — BEM block
+.feature {
+  padding: var(--spacing-md);        // 16px
+  background: var(--color-sf-surface);
+
+  // 3. Elements — BEM __element
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding-block-end: var(--spacing-md);
+    border-block-end: 1px solid var(--color-sf-outline-variant);
+  }
+
+  &__content {
+    padding-block-start: var(--spacing-md);
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    padding-block-start: var(--spacing-md);
+  }
+
+  // 4. Modifiers — BEM --modifier
+  &--compact {
+    padding: var(--spacing-sm);
+  }
+}
+
+// 5. Syncfusion overrides — always scoped to :host
+:host ::ng-deep {
+  .e-grid .e-headercell {
+    background: var(--color-sf-surface-variant);
+  }
+}
+
+// 6. Responsive — use container queries over media queries when possible
+@container (max-width: 600px) {
+  .feature {
+    padding: var(--spacing-sm);
+  }
+}
+```
+
+**Forbidden in SCSS:**
+```scss
+// ❌ Hardcoded values
+color: #6750A4;
+padding: 16px;
+font-size: 14px;
+
+// ❌ Non-token spacing
+margin: 10px;
+gap: 15px;
+
+// ❌ Inline styles anywhere
+// <div style="color: red">
+
+// ❌ Global ::ng-deep without :host scope
+::ng-deep .e-grid { }   // pollutes other components
+```
+
+**RTL-safe CSS:**
+- Use logical properties: `padding-inline-start` not `padding-left`, `margin-block-end` not `margin-bottom`.
+- Use `inset-inline-start` not `left` for positioned elements.
+- These automatically flip in RTL — Syncfusion's `enableRtl(true)` handles component internals.
+
+---
+
+### G. Architecture Rules
+
+**Separation of concerns — always:**
+- Component: template logic, UI state via signals, user event handling only.
+- Service: all business logic, HTTP, data transformation, caching.
+- Model: typed interfaces and type aliases only.
+- Store (optional): cross-component signal state for complex features.
+
+**Component size limits:**
+- Template: split if > 150 lines.
+- TypeScript class: split if > 120 lines of logic.
+- SCSS: split into partials if > 200 lines.
+
+**When to split a component:**
+- A section is reused in 2+ places → extract to shared component.
+- A section has its own loading/empty/error state → extract.
+- A section's data comes from a different source → extract.
+- A dialog/drawer has a form → always a separate component.
+
+**Change detection:**
+- Always `ChangeDetectionStrategy.OnPush` on all components.
+- Signals work with `OnPush` — no manual `markForCheck()` needed when using signals.
+
+---
+
+### H. Dependency Injection Rules
+
+```typescript
+// ✅ Always inject() — not constructor injection
+export class FeatureComponent {
+  private readonly featureService = inject(FeatureService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+}
+
+// ❌ Never constructor injection
+export class FeatureComponent {
+  constructor(private featureService: FeatureService) {} // forbidden
+}
+```
+
+**takeUntilDestroyed for RxJS subscriptions:**
+```typescript
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export class FeatureComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    this.service.data$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(data => this.items.set(data));
+  }
+}
+```
+
+---
+
+### I. Routing Rules
+
+```typescript
+// app.routes.ts — always lazy-loaded feature routes
+export const routes: Routes = [
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./features/users/users.component').then(m => m.UsersComponent),
+  },
+  {
+    path: 'users/:id',
+    loadComponent: () =>
+      import('./features/users/user-detail/user-detail.component')
+        .then(m => m.UserDetailComponent),
+  },
+];
+```
+
+- Always lazy-load feature components via `loadComponent`.
+- No eager-loaded feature routes.
+- Route guards as functional guards (`CanActivateFn`) — not class-based guards.
+
+---
+
+### J. Do / Don't Summary
+
+**Do:**
+- ✅ Standalone components only — `standalone: true` always
+- ✅ `ChangeDetectionStrategy.OnPush` always
+- ✅ Signals for all local UI state
+- ✅ `inject()` for all dependency injection
+- ✅ New control flow: `@if`, `@for`, `@switch`, `@defer`
+- ✅ Strongly typed interfaces — never `any` or `object`
+- ✅ Logical CSS properties for RTL safety
+- ✅ CSS custom properties (tokens) for all SCSS values
+- ✅ Lazy-loaded routes only
+
+**Don't:**
+- ❌ `any` type — ever
+- ❌ `*ngIf`, `*ngFor`, `*ngSwitch` — use new control flow
+- ❌ Constructor injection — use `inject()`
+- ❌ NgModules
+- ❌ Inline styles
+- ❌ Business logic in components — belongs in services
+- ❌ Hardcoded SCSS values — use tokens
+- ❌ Global `::ng-deep` without `:host` scope
+- ❌ Method calls in templates that recalculate on every CD cycle
+- ❌ Eager-loaded feature routes

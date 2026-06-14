@@ -1,0 +1,36 @@
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
+  <!-- Brand block. The mark stays visible when collapsed. -->
+  <div class="sidebar__brand">
+    <span class="sidebar__brand-mark">خ</span>
+    @if (!collapsed()) {
+      <span class="sidebar__brand-name">الخوارزمي</span>
+    }
+  </div>
+
+  <!-- Primary navigation. -->
+  <nav class="sidebar__nav">
+    @for (item of navItems; track item.route) {
+      <a
+        class="sidebar__link"
+        [routerLink]="item.route"
+        routerLinkActive="sidebar__link--active"
+        [attr.aria-label]="item.label"
+      >
+        <svg
+          class="sidebar__icon"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path [attr.d]="item.iconPath" />
+        </svg>
+
+        @if (!collapsed()) {
+          <span class="sidebar__label">{{ item.label }}</span>
+        }
+      </a>
+    }
+  </nav>
+</aside>

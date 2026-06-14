@@ -1,0 +1,28 @@
+<!--
+  Sidebar shell. <aside> is a complementary landmark; the inner <nav>
+  is the navigation landmark with an accessible label.
+-->
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
+  <!-- Brand block. The mark stays visible when collapsed. -->
+  <div class="sidebar__brand">
+    <span class="sidebar__brand-mark">خ</span>
+    @if (!collapsed()) {
+      <span class="sidebar__brand-name">{{ brandName() }}</span>
+    }
+  </div>
+
+  <!-- Primary navigation. Each item becomes one child row. -->
+  <nav class="sidebar__nav" [attr.aria-label]="navLabel()">
+    @for (item of items(); track item.route ?? item.label) {
+      <kw-sidebar-item
+        [iconPath]="item.iconPath"
+        [label]="item.label"
+        [route]="item.route"
+        [href]="item.href"
+        [disabled]="item.disabled ?? false"
+        [badge]="item.badge"
+        [collapsed]="collapsed()"
+      />
+    }
+  </nav>
+</aside>

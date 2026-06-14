@@ -1,0 +1,93 @@
+---
+alwaysApply: true
+---
+
+# khwarizmi-design-system.rules.md
+
+### A. Purpose
+Global operating rules for all AI-generated UI within the Khwarizmi Design System. This file governs cross-domain behavior and overrides all domain-specific rules in cases of conflict.
+
+### B. Rules
+
+**Foundation:**
+- Khwarizmi is an **enterprise-first** design system.
+- All UI is built exclusively on the **Syncfusion UI Kit — Material-3 Theme**.
+- Figma source: `https://www.figma.com/community/file/1454123774600129202/syncfusion-ui-kit-material-3-theme`
+- Token source: `material3-tokens.json` (light), `material3-dark-tokens.json` (dark), `css-variables.css`.
+- No other UI libraries, component kits, or design systems are permitted.
+
+**Product Context:**
+- Serves: Government platforms, CRM, ERP, Survey, Analytics, AI platforms, Monitoring, Data management, Administrative portals.
+- Users are professionals performing business-critical work.
+- Optimize for productivity and effectiveness — never for entertainment or engagement.
+
+**Five Non-Negotiable Pillars (in priority order):**
+1. **Clarity** — purpose is always immediately understandable
+2. **Consistency** — same Syncfusion component, same behavior, everywhere
+3. **Accessibility** — WCAG AA minimum, always (Syncfusion Material-3 is WCAG 2.2 compliant)
+4. **Productivity** — enterprise users complete tasks efficiently
+5. **Scalability** — solutions work across products and teams
+
+**Language and Direction:**
+- Infer from Figma frame content.
+- Latin text detected → English, LTR. Do not call `enableRtl()`. Do not set `lang="ar"` or `dir="rtl"`.
+- Arabic text detected → Arabic, RTL. Call `enableRtl(true)` + `setCulture('ar')` + `L10n.load()`.
+- Ambiguous or no Figma context → ask once before proceeding. Do not default to either direction.
+
+**Design Decision Hierarchy (highest to lowest):**
+1. User understanding
+2. Business workflow efficiency
+3. Data visibility
+4. Accessibility
+5. Consistency
+6. Visual refinement
+
+**Information Hierarchy for all content screens:**
+1. Context (where am I, what is this for)
+2. Summary (KPIs, totals, status)
+3. Insights (trends, alerts, anomalies)
+4. Analysis (charts, comparisons)
+5. Details (tables, records)
+6. Actions (CRUD, exports, workflows)
+
+**Theme Rules:**
+- Light mode: `:root` token values + `@syncfusion/ej2/material3.css`
+- Dark mode: `.e-dark-mode` class on root + dark token set
+- Custom branding: use Syncfusion Theme Studio to generate overridden `material3.css`
+- Never override Syncfusion internal CSS classes directly
+
+**Quality Checklist (run before every output):**
+- [ ] Purpose immediately clear?
+- [ ] Actions discoverable?
+- [ ] Workflow efficient?
+- [ ] Information hierarchy correct? (Context → Summary → Insights → Details → Actions)
+- [ ] Accessibility respected? (Syncfusion built-in ARIA intact?)
+- [ ] Design consistent? (Syncfusion Material-3 components used throughout?)
+- [ ] Unnecessary complexity removed?
+- [ ] Solution scalable?
+- [ ] Direction applied correctly? (LTR for Latin content, RTL for Arabic content — matches detected language.)
+- [ ] All colors from token system?
+- [ ] All components from Syncfusion Material-3 kit?
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use Syncfusion UI Kit — Material-3 Theme for every component.
+- ✅ Always treat data as a first-class design element.
+- ✅ Always reuse existing Syncfusion patterns before creating new ones.
+- ✅ Infer language and direction from Figma content before generating any code.
+
+**Don't:**
+- ❌ Do not use any UI library other than Syncfusion Material-3.
+- ❌ Do not build custom components when a Syncfusion component exists.
+- ❌ Do not optimize for consumer engagement patterns.
+- ❌ Do not allow aesthetic preference to override the decision hierarchy.
+- ❌ Do not override Syncfusion internal styles with direct class overrides.
+- ❌ Do not assume a language or direction — always infer from content or ask.
+
+### D. MCP Usage Guidance
+- This file is the master rule set — it overrides all other rule files.
+- When generating any screen, apply the quality checklist before outputting.
+- When two rules conflict, defer to the design decision hierarchy in this file.
+- When user intent is ambiguous, ask once before proceeding. Do not default to a language or direction.
+- Always output a rule compliance note identifying which Khwarizmi rules were applied.

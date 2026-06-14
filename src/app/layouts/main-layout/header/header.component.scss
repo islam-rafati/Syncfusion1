@@ -1,0 +1,80 @@
+// Top header bar. All colors/spacing from tokens; RTL-aware.
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+  height: var(--spacing-7xl); // 64px
+  padding-inline: var(--spacing-3xl);
+  background-color: var(--color-bg-white);
+  border-bottom: 1px solid var(--color-border-neutral-secondary);
+
+  &__start,
+  &__end {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  &__title {
+    font-size: var(--typo-size-text-lg);
+    line-height: var(--line-height-text-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-display);
+  }
+
+  // Round, transparent icon button with a hover surface.
+  &__icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-5xl); // 40px
+    height: var(--spacing-5xl);
+    border: none;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    color: var(--color-icon-default);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--color-bg-neutral);
+    }
+  }
+
+  // Notification count bubble, pinned to the button's top-end corner.
+  &__badge {
+    position: absolute;
+    top: var(--spacing-xs);
+    inset-inline-end: var(--spacing-xs);
+    min-width: var(--spacing-lg);
+    height: var(--spacing-lg);
+    padding-inline: var(--spacing-xxs);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-error);
+    color: var(--color-text-oncolor);
+    font-size: var(--typo-size-text-2xs);
+    line-height: var(--line-height-text-2xs);
+    font-weight: var(--font-weight-bold);
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  &__avatar {
+    color: var(--color-icon-primary);
+  }
+
+  &__user-name {
+    font-size: var(--typo-size-text-sm);
+    line-height: var(--line-height-text-sm);
+    color: var(--color-text-primary);
+  }
+}

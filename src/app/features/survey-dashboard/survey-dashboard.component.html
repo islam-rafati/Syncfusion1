@@ -1,0 +1,46 @@
+<!-- Full frame: left sidebar + main area (app bar + scrollable content). -->
+<div class="frame">
+  <app-sidebar-nav />
+
+  <div class="frame__main">
+    <app-app-bar />
+
+    <main class="content">
+      <app-welcome-banner
+        userName="Mais"
+        (newSurvey)="onNewSurvey()"
+        (useTemplate)="onUseTemplate()"
+      />
+
+      <!-- KPI summary row. -->
+      <section class="content__kpis">
+        @for (kpi of kpis(); track kpi.id) {
+          <app-kpi-card [kpi]="kpi" />
+        }
+      </section>
+
+      <!-- Search + filter chips. -->
+      <app-survey-filter-bar
+        [filters]="filters"
+        [activeFilter]="activeFilter()"
+        (search)="onSearch($event)"
+        (filterSelect)="onFilterSelect($event)"
+      />
+
+      <!-- Survey table (or empty state). -->
+      @if (isEmpty()) {
+        <p class="content__empty">No surveys match your filters.</p>
+      } @else {
+        <app-surveys-table
+          [rows]="filteredSurveys()"
+          (favoriteToggle)="onFavoriteToggle($event)"
+          (reportOpen)="onOpenReport($event)"
+          (actionSelect)="onRowAction($event)"
+        />
+      }
+
+      <!-- Pagination footer. -->
+      <app-dashboard-pager [total]="filteredSurveys().length" />
+    </main>
+  </div>
+</div>

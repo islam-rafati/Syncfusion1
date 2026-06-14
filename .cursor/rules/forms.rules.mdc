@@ -1,0 +1,98 @@
+---
+globs: **/forms/**, **/*Form*.tsx
+alwaysApply: false
+---
+# forms.rules.md
+
+### A. Purpose
+Standardize all form design, behavior, and validation using Syncfusion UI Kit — Material-3 Theme components exclusively.
+
+### B. Rules
+
+**Structure:**
+- All forms use Syncfusion's `FormValidator` for validation logic.
+- Simple forms (≤ 6 fields): single column layout.
+- Medium forms (7–15 fields): two-column layout using 6/6 grid split.
+- Complex forms (> 15 fields or multi-domain): use `SfStepper` for multi-step progression.
+- Group related fields under labeled sections with a divider and H4 heading.
+- Section spacing: 32px between groups. Field spacing: 16px between fields.
+
+**Syncfusion Component Per Field Type:**
+- Short text → `SfTextBox`
+- Long text → `SfTextBox` (multiline prop)
+- Number → `SfNumericTextBox`
+- Password → `SfTextBox` (type: password)
+- Formatted input (phone, ID, IBAN) → `SfMaskedTextBox`
+- Single select ≤ 5 options → `SfRadioButton`
+- Single select long list → `SfDropDownList`
+- Single select with search → `SfComboBox`
+- Multi-select → `SfMultiSelect`
+- Multi-select inline compact → `SfChip` / `SfChipList`
+- Boolean setting → `SfSwitch`
+- Agree/acknowledge → `SfCheckBox`
+- Date → `SfDatePicker`
+- Date range → `SfDateRangePicker`
+- Date + time → `SfDateTimePicker`
+- Time only → `SfTimePicker`
+- File → `SfUploader`
+- Color → `SfColorPicker`
+- OTP → `SfOtpInput`
+- Signature → `SfSignature`
+- Rating → `SfRating`
+- Range value → `SfSlider`
+
+**Label and Helper Rules:**
+- Every field MUST have a visible label — no placeholder-only fields.
+- Labels appear ABOVE the field (RTL-safe).
+- Required fields marked with `*` after label text.
+- Helper text below field: Caption style (12px, `--color-sf-on-surface-variant`).
+- Error text replaces helper text using `--color-sf-error`.
+- Character count shown below `SfTextBox` multiline when limit exists.
+
+**Validation:**
+- Use `FormValidator` — validate on blur and on submit.
+- Errors appear inline below the field via Syncfusion's built-in error display.
+- Error message format: "What is wrong. How to fix it."
+- Multi-field errors also shown in `SfMessage` (error variant) at top of form on submit.
+- Disable submit button during submission — show `SfSpinner` inside `SfButton`.
+- On success: show `SfToast` (success variant).
+
+**Progressive Disclosure:**
+- Advanced fields hidden behind `SfAccordion` toggle.
+- Conditional fields use show/hide with smooth transition.
+- Multi-stage flows always use `SfStepper` — never multiple pages.
+
+**RTL:**
+- All Syncfusion form components respect `enableRtl(true)` automatically.
+- Labels, helper text, and error messages align right in RTL.
+- Do not manually set `direction: rtl` on individual components.
+
+**Accessibility:**
+- Syncfusion components include ARIA by default — do not remove.
+- `SfTextBox`, `SfDropDownList`, etc. all support `aria-label` and `aria-describedby` props.
+- Focus order follows RTL reading direction automatically when `enableRtl` is active.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfStepper` for forms with > 15 fields or distinct logical stages.
+- ✅ Use `FormValidator` for all validation — never manual validation logic.
+- ✅ Use the correct Syncfusion input component per data type.
+- ✅ Group related fields with section headers and 32px spacing.
+- ✅ Disable submit during processing with `SfSpinner` inside `SfButton`.
+
+**Don't:**
+- ❌ Do not use `<input>` or `<select>` HTML directly — always use Syncfusion components.
+- ❌ Do not use placeholder text as a substitute for labels.
+- ❌ Do not validate on every keystroke.
+- ❌ Do not use `SfTextBox` for date input — always `SfDatePicker`.
+- ❌ Do not mix `SfCheckBox` and `SfSwitch` for the same type of boolean decision.
+- ❌ Do not build custom dropdowns — use `SfDropDownList` or `SfComboBox`.
+
+### D. MCP Usage Guidance
+- When generating a form, identify field count/type → select single/two-column/stepper layout.
+- Auto-map each field to its Syncfusion Material-3 component.
+- Auto-apply: label above field, 16px between fields, 32px between sections, `*` for required.
+- Always generate validation state variants: default, error, success, disabled.
+- For Stepper forms, generate each step as a discrete section with Back/Next/Submit `SfButton` controls.
+- Reference Syncfusion Figma Kit layer names when mapping from Figma frames to code components.

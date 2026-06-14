@@ -1,0 +1,64 @@
+// Full frame: sidebar (start) + main area (fills the rest).
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.frame {
+  display: flex;
+  height: 100%;
+  // Faint lavender page background behind the content.
+  background-color: rgba(var(--color-sf-surface-variant), 0.4);
+
+  // Main area: app bar pinned, content scrolls. 24px inset, 16px section gaps.
+  &__main {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: var(--spacing-md); // 16px between app bar and content
+    padding: var(--spacing-lg); // 24px frame inset
+    overflow-y: auto;
+
+    // Overlay scrolling: the scrollbar must not reserve layout width, so the
+    // content keeps its exact 1112px Figma width (no 15px gutter at 1440×980).
+    scrollbar-width: none; // Firefox
+    &::-webkit-scrollbar { width: 0; height: 0; } // Chromium/WebKit
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); // 16px between sections
+
+  // KPI row: 5 equal columns, 24px gaps. Wraps on narrow widths.
+  &__kpis {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--spacing-lg); // 24px
+  }
+
+  &__empty {
+    margin: 0;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+  }
+}
+
+// Responsive: collapse KPI columns on smaller viewports.
+@media (max-width: 1100px) {
+  .content__kpis {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .content__kpis {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,72 @@
+// ============================================================
+// Sidebar (parent) layout
+//
+// RTL-aware: border uses border-inline-start so the panel sits on
+// the correct edge of the content in RTL (and LTR). All values are
+// design tokens — no hardcoded colors/spacing.
+// ============================================================
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  inline-size: var(--width-xxs); // expanded width (logical = width)
+  block-size: 100vh; // full viewport height (logical = height)
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background-color: var(--color-bg-white);
+  border-inline-start: 1px solid var(--color-border-neutral-secondary);
+  transition: inline-size 0.2s ease;
+
+  // Collapsed: narrow, icon-only, centered content.
+  &--collapsed {
+    inline-size: var(--spacing-9xl); // ~96px icon rail
+    align-items: center;
+  }
+
+  // ─── Brand ───────────────────────────────────────────────
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding-inline: var(--spacing-md);
+  }
+
+  &__brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--spacing-5xl); // square brand mark
+    block-size: var(--spacing-5xl);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-oncolor);
+    font-size: var(--typo-size-text-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  &__brand-name {
+    font-size: var(--typo-size-text-xl);
+    line-height: var(--line-height-text-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-display);
+  }
+
+  // ─── Navigation list ─────────────────────────────────────
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    inline-size: 100%;
+  }
+}
+
+// Mobile: turn the sidebar into a horizontal, scrollable strip.
+@media (max-width: 768px) {
+  .sidebar {
+    inline-size: 100%;
+    block-size: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-inline-start: none;
+    border-block-end: 1px solid var(--color-border-neutral-secondary);
+  }
+}

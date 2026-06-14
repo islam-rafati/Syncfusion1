@@ -1,0 +1,105 @@
+// ============================================================
+// Sidebar Item ("Atom / context menu" row)
+//
+// RTL-FIRST: every directional value uses LOGICAL properties
+// (inline-start/end, inset-inline, margin-inline) so the row works
+// in both RTL and LTR with no overrides.
+//
+// All colors / spacing / radius / type come from design tokens.
+// No hardcoded values (one exception is flagged below).
+// ============================================================
+
+// The host is a block so each row stacks vertically in the parent nav.
+:host {
+  display: block;
+}
+
+// The interactive row. <a> and <button> are normalised to look identical.
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg); // space between icon and label
+  inline-size: 100%; // fill the nav width (logical = width)
+  padding: var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit; // <button> should match surrounding text
+  text-align: start; // RTL-aware text alignment
+  cursor: pointer;
+  position: relative; // anchor for the active indicator bar
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  // Pointer hover feedback.
+  &:hover {
+    background-color: var(--color-bg-primary-50);
+    color: var(--color-text-teal);
+  }
+
+  // Keyboard focus ring. focus-visible only shows it for keyboard users,
+  // not on mouse click, which keeps the UI clean while staying accessible.
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  // Active route / selection state.
+  &--active {
+    background-color: var(--color-bg-primary-50);
+    color: var(--color-text-teal);
+    font-weight: var(--font-weight-bold);
+  }
+
+  // Active indicator bar on the LEADING (inline-start) edge.
+  // inset-inline-start keeps it on the correct side in RTL and LTR.
+  &--active::before {
+    content: '';
+    position: absolute;
+    inset-block: var(--spacing-sm); // top/bottom inset (logical)
+    inset-inline-start: 0;
+    inline-size: 3px; // TODO(token): no width token for a 3px indicator — flagged, not invented
+    border-radius: var(--radius-md);
+    background-color: var(--color-primary);
+  }
+
+  // Disabled: muted text, no pointer, not focusable via pointer-events.
+  &--disabled {
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// Icon keeps its size and gets the muted icon color by default.
+.item__icon {
+  flex-shrink: 0;
+  color: var(--color-icon-500);
+}
+
+// On hover/active the icon follows the brand (primary) color.
+.item:hover .item__icon,
+.item--active .item__icon {
+  color: var(--color-icon-primary);
+}
+
+// Label text uses the body-md type token.
+.item__label {
+  font-size: var(--typo-size-text-md);
+  line-height: var(--line-height-text-md);
+  white-space: nowrap;
+}
+
+// Badge pill pushed to the inline-end of the row by the auto margin.
+.item__badge {
+  margin-inline-start: auto; // RTL-aware: pushes badge to the trailing edge
+  padding-inline: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-oncolor);
+  font-size: var(--typo-size-text-xs);
+  line-height: var(--line-height-text-xs);
+  font-weight: var(--font-weight-bold);
+}

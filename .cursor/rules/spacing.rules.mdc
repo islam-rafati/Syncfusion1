@@ -1,0 +1,57 @@
+---
+alwaysApply: false
+---
+
+# spacing.rules.mdc
+
+### A. Purpose
+Enforce a strict spatial system across all Khwarizmi interfaces to ensure visual rhythm, predictability, and scalability.
+
+### B. Rules
+- All spacing values MUST be multiples of **8px**.
+- Defined spacing scale:
+  - **2px** — micro: dividers, icon padding only
+  - **4px** — extra-small: tight internal component spacing
+  - **8px** — small: default padding within compact components
+  - **12px** — medium-small: list item padding, chip padding
+  - **16px** — medium: standard component padding, card padding
+  - **24px** — large: section spacing, form group gap
+  - **32px** — extra-large: between major sections
+  - **40px** — 2xl: content block margins
+  - **48px** — 3xl: page-level section gaps
+  - **64px** — 4xl: hero/dashboard top spacing
+- Padding inside components uses internal spacing tokens (8px, 12px, 16px).
+- Margin between components uses external spacing tokens (16px, 24px, 32px).
+- Grid gutter: 16px desktop, 12px tablet, 8px mobile (fixed).
+- Icon-to-label gap: 8px minimum.
+- Form field to label gap: 4px.
+- Form field to helper text gap: 4px.
+- Between form rows: 16px.
+- Between form sections: 32px.
+- Card internal padding: 16px or 24px — never less, never arbitrary.
+- Table cell padding: 12px vertical, 16px horizontal.
+- Do not use percentage-based spacing for component internals.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Always use an 8px-based value for every spacing decision.
+- ✅ Use 16px as the default padding for cards and panels.
+- ✅ Use 24px to separate logical groups within a form or section.
+- ✅ Use 32px to separate major page sections.
+- ✅ Keep icon-label pairs 8px apart consistently.
+
+**Don't:**
+- ❌ Do not use values like 5px, 7px, 10px, 15px, 18px, 20px.
+- ❌ Do not use `margin: auto` to center content within components.
+- ❌ Do not mix padding and margin inconsistently within the same component type.
+- ❌ Do not add spacing overrides per-component without token reference.
+- ❌ Do not collapse spacing between sections to 0 — minimum section gap is 16px.
+
+### D. MCP Usage Guidance
+- When generating layouts or components, resolve all spacing from the 8px scale.
+- When spacing is not specified in a prompt, apply the default: 16px internal padding, 24px between sections.
+- Reject or flag any spacing value not on the defined scale.
+- When generating forms, auto-apply: 4px label-to-field, 16px between fields, 32px between groups.
+
+---

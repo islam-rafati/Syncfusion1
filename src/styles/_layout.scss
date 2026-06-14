@@ -1,0 +1,75 @@
+// ============================================================
+// Layout Utilities — Khwarizmi
+// Container + flex/grid helpers built only from spacing tokens.
+// Keeps page layout consistent without hardcoded values.
+// ============================================================
+
+// Centered page container with responsive padding.
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-desktop);
+}
+
+// On smaller screens use the mobile container padding.
+@media (max-width: 768px) {
+  .container {
+    padding-inline: var(--container-padding-mobile);
+  }
+}
+
+// ─── Flexbox helpers ───────────────────────────────────────
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+// ─── Gap helpers (spacing tokens only) ─────────────────────
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+.gap-xl {
+  gap: var(--spacing-xl);
+}
+
+.gap-2xl {
+  gap: var(--spacing-2xl);
+}
+
+// ─── Sizing helpers ────────────────────────────────────────
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  min-height: 100vh;
+}

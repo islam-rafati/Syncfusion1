@@ -1,0 +1,31 @@
+<!-- Welcome banner: title/subtitle top-left, actions bottom-right, badge top-right. -->
+<section class="welcome">
+  <!-- Faint decorative survey watermark, vertically centered on the end side. -->
+  <span class="welcome__watermark" aria-hidden="true">
+    <app-icon name="my-surveys" [size]="150" />
+  </span>
+
+  <!-- Top block: heading + supporting text. -->
+  <div class="welcome__top">
+    <h1 class="welcome__title">Welcome back, {{ userName() }}</h1>
+    <p class="welcome__subtitle">
+      Monitor survey activity, track response collection, and manage survey
+      operations from a single workspace.
+    </p>
+  </div>
+
+  <!-- Bottom action row, aligned to the end. -->
+  <div class="welcome__actions">
+    <button type="button" class="btn btn--primary" (click)="newSurvey.emit()">
+      <app-icon name="add" [size]="16" />
+      <span>New Survey</span>
+    </button>
+    <button type="button" class="btn btn--outline" (click)="useTemplate.emit()">
+      <app-icon name="content-copy" [size]="16" />
+      <span>Use Template</span>
+    </button>
+  </div>
+
+  <!-- Status pill, absolutely placed at the top-end corner. -->
+  <span class="welcome__badge">Last updated today</span>
+</section>

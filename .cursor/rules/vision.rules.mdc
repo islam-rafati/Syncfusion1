@@ -1,0 +1,76 @@
+# vision.rules.mdc
+
+### A. Purpose
+Encode the philosophical foundation and long-term product vision of Khwarizmi into AI behavior. All generated UI must embody this vision without exception.
+
+### B. Rules
+
+**Product Philosophy:**
+- Khwarizmi exists to unify the enterprise software experience across the Arabic-speaking world.
+- Its implementation foundation is the **Syncfusion UI Kit — Material-3 Theme** — the single source of all UI components.
+- Success is measured by the quality of user experiences, not the number of components built.
+- A successful Khwarizmi product allows users to move between applications without relearning.
+
+**Component System Philosophy:**
+- Syncfusion Material-3 is chosen because it provides:
+  - 85+ enterprise-grade components covering every enterprise UI need
+  - Built-in WCAG 2.2 / Section 508 / WAI-ARIA compliance
+  - Native RTL support via `enableRtl(true)`
+  - Material-3 design token system aligned with Khwarizmi tokens
+  - Consistent behavior across Grid, Forms, Charts, Scheduling, and Navigation
+  - Design-to-code parity via the Syncfusion Figma UI Kit
+- The Figma kit and code components are 1:1 — every Figma component maps directly to a Syncfusion React/JS/Blazor/Angular component.
+- Theme customization flows: Figma tokens → Syncfusion Design Tokens plugin → Theme Studio → `material3.css`
+
+**AI-First Design System Principle:**
+- These rules are non-negotiable constraints for AI tools — not suggestions.
+- AI must never hallucinate components outside the Syncfusion Material-3 library.
+- AI must never use a non-Syncfusion component when a Syncfusion equivalent exists.
+- AI must flag ambiguity and defer to the design system rather than invent solutions.
+- AI-generated UI is only valid if it passes the Quality Checklist in `khwarizmi-design-system.rules.md`.
+
+**Enterprise Dashboard Mindset:**
+- Dashboards are operational tools — not decorative surfaces.
+- Every element answers: What happened? What is happening? What needs attention? What action is needed?
+- Implementation: `SfDashboardLayout` + `SfCard` (KPIs) + `SfChart` + `SfGrid`
+- Loading: `SfSkeleton` for all panels — never empty screens
+- Real-time updates: `SfToast` or `SfBadge` — never page refresh
+
+**Decision Intelligence Focus:**
+- UI must surface the right information at the right moment to support informed decisions.
+- AI features (`SfAIAssistView`, `SfChatUI`) must explain outputs, show confidence, allow verification.
+- Every `SfChart` visualization must tie directly to a business question.
+- Information flow: Context → Summary → Insights → Analysis → Details → Actions.
+
+**Arabic-First Vision:**
+- Every product built on Khwarizmi feels native to Arabic-speaking professionals.
+- RTL first: `enableRtl(true)` at app bootstrap — all Syncfusion components respond automatically.
+- Localization: `L10n.load(arLocale)` + `setCulture('ar')` at app root.
+- Arabic typography applied to all text within Syncfusion component templates.
+
+**North Star:**
+- A Khwarizmi product is recognizable without a logo.
+- Recognized through: clarity, structure, consistency, Syncfusion Material-3 visual language, Arabic-first experience.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use Syncfusion Material-3 as the single component source of truth.
+- ✅ Enable RTL and Arabic locale at app root level for all Syncfusion components.
+- ✅ Design dashboards with `SfDashboardLayout` that answer operational questions instantly.
+- ✅ Build AI features (`SfAIAssistView`) with explainability and human control.
+- ✅ Maintain the information hierarchy: Context → Summary → Insights → Analysis → Details → Actions.
+
+**Don't:**
+- ❌ Do not use any UI library other than Syncfusion Material-3.
+- ❌ Do not build AI features without explanation or confidence signals.
+- ❌ Do not create dashboards without KPIs (`SfCard`) at the top row.
+- ❌ Do not design for aesthetics first — enterprise value over visual style.
+- ❌ Do not skip RTL setup (`enableRtl`, `setCulture`, `L10n`) in any new project.
+
+### D. MCP Usage Guidance
+- This file defines the "why" behind every Khwarizmi rule — it takes precedence when rules conflict with a user request.
+- When generating AI-powered features, always include: output explanation, confidence indicator, human review `SfButton`.
+- When generating dashboards, enforce: `SfDashboardLayout` + KPI `SfCard` top row + `SfChart` middle + `SfGrid` bottom.
+- When bootstrapping any new project, output the Syncfusion RTL + locale setup code block first.
+- Silently verify every screen against the North Star before output.

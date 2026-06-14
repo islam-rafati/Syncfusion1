@@ -1,0 +1,294 @@
+// =============================================================================
+// _tokens.scss
+// Khwarizmi Design System — Single source of truth for all SCSS tokens
+// Generated from: css-variables.css + material3-tokens.json
+//
+// USAGE:
+//   All --color-sf-* values are RGB tuples — always wrap in rgba():
+//   background: rgba(var(--color-sf-primary), 1);
+//   background: rgba(var(--color-sf-primary), 0.08);
+//
+//   Opacity tokens already include the alpha — use as-is:
+//   background: rgba(var(--color-sf-primary-opacity-8));  ← wrong
+//   Use the full rgba() value from the token directly via CSS var.
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// 1. SPACING — 8px base scale
+// -----------------------------------------------------------------------------
+:root {
+  --spacing-0:   0px;
+  --spacing-1:   2px;    // micro: dividers, icon insets only
+  --spacing-2:   4px;    // xs: label-to-field, tight internal gaps
+  --spacing-3:   8px;    // sm: compact component padding, icon-label gap
+  --spacing-4:   12px;   // md-sm: list item padding, chip padding
+  --spacing-5:   16px;   // md: standard card/component padding ← default
+  --spacing-6:   24px;   // lg: section spacing, form group gap
+  --spacing-7:   32px;   // xl: between major sections
+  --spacing-8:   40px;   // 2xl: content block margins
+  --spacing-9:   48px;   // 3xl: page-level section gaps
+  --spacing-10:  64px;   // 4xl: hero/dashboard top spacing
+
+  // Semantic aliases — use these in components
+  --spacing-xs:   var(--spacing-2);   // 4px
+  --spacing-sm:   var(--spacing-3);   // 8px
+  --spacing-md:   var(--spacing-5);   // 16px
+  --spacing-lg:   var(--spacing-6);   // 24px
+  --spacing-xl:   var(--spacing-7);   // 32px
+  --spacing-2xl:  var(--spacing-8);   // 40px
+  --spacing-3xl:  var(--spacing-9);   // 48px
+  --spacing-4xl:  var(--spacing-10);  // 64px
+
+  // Component-specific spacing (matches rules files)
+  --spacing-form-label-gap:     var(--spacing-2);   // 4px  label → field
+  --spacing-form-helper-gap:    var(--spacing-2);   // 4px  field → helper text
+  --spacing-form-field-gap:     var(--spacing-5);   // 16px between fields
+  --spacing-form-section-gap:   var(--spacing-7);   // 32px between form groups
+  --spacing-card-padding:       var(--spacing-5);   // 16px card internal padding
+  --spacing-card-padding-lg:    var(--spacing-6);   // 24px large card padding
+  --spacing-table-cell-v:       var(--spacing-4);   // 12px table cell vertical
+  --spacing-table-cell-h:       var(--spacing-5);   // 16px table cell horizontal
+  --spacing-icon-label-gap:     var(--spacing-3);   // 8px  icon → label
+  --spacing-nav-item-gap:       var(--spacing-3);   // 8px  between nav items
+  --spacing-nav-group-gap:      var(--spacing-5);   // 16px between nav groups
+}
+
+
+// -----------------------------------------------------------------------------
+// 2. BORDER RADIUS
+// -----------------------------------------------------------------------------
+:root {
+  --radius-none:  0px;
+  --radius-xs:    2px;
+  --radius-sm:    4px;
+  --radius-md:    8px;    // ← default for cards, inputs, buttons
+  --radius-lg:    12px;
+  --radius-xl:    16px;
+  --radius-2xl:   24px;
+  --radius-full:  9999px; // pills, avatars, tags
+}
+
+
+// -----------------------------------------------------------------------------
+// 3. ELEVATION / SHADOWS
+// Built from --color-sf-shadow (0,0,0) token
+// -----------------------------------------------------------------------------
+:root {
+  --shadow-none:  none;
+  --shadow-xs:    0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.08),
+                  0 1px 3px 1px rgba(0, 0, 0, 0.06);
+  --shadow-md:    0 1px 2px rgba(0, 0, 0, 0.12),
+                  0 2px 6px 2px rgba(0, 0, 0, 0.08);
+  --shadow-lg:    0 4px 8px 3px rgba(0, 0, 0, 0.10),
+                  0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-xl:    0 6px 10px 4px rgba(0, 0, 0, 0.10),
+                  0 2px 3px rgba(0, 0, 0, 0.14);
+  --shadow-2xl:   0 8px 12px 6px rgba(0, 0, 0, 0.10),
+                  0 4px 4px rgba(0, 0, 0, 0.14);
+
+  // Semantic elevation aliases (Material 3 tonal surface levels)
+  --elevation-0:  var(--shadow-none);
+  --elevation-1:  var(--shadow-sm);   // cards at rest
+  --elevation-2:  var(--shadow-md);   // cards on hover, dropdowns
+  --elevation-3:  var(--shadow-lg);   // dialogs, drawers
+  --elevation-4:  var(--shadow-xl);   // navigation, appbar
+  --elevation-5:  var(--shadow-2xl);  // toasts, tooltips
+}
+
+
+// -----------------------------------------------------------------------------
+// 4. TYPOGRAPHY
+// -----------------------------------------------------------------------------
+:root {
+  // Font families — Roboto first to match the Syncfusion Material-3 kit.
+  --font-family-arabic:  'Cairo', 'IBM Plex Arabic', 'Noto Kufi Arabic', sans-serif;
+  --font-family-latin:   'Roboto', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-family-mono:    'IBM Plex Mono', 'Fira Code', monospace;
+  --font-family-body:    var(--font-family-latin); // overridden to arabic when dir=rtl
+
+  // Font size scale (matches Khwarizmi type scale)
+  --typo-size-display:   3.5625rem;  // 57px — hero headings only
+  --typo-size-h1:        2rem;       // 32px
+  --typo-size-h2:        1.5rem;     // 24px
+  --typo-size-h3:        1.25rem;    // 20px
+  --typo-size-h4:        1rem;       // 16px semibold
+  --typo-size-text-xl:   1.125rem;   // 18px
+  --typo-size-text-lg:   1rem;       // 16px — body large
+  --typo-size-text-md:   0.875rem;   // 14px — body medium ← default
+  --typo-size-text-sm:   0.75rem;    // 12px — caption / helper text
+  --typo-size-text-xs:   0.6875rem;  // 11px — label (uppercase)
+
+  // Font weights
+  --font-weight-regular:   400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+
+  // Line heights
+  --line-height-tight:    1.2;   // headings
+  --line-height-snug:     1.35;  // subheadings
+  --line-height-normal:   1.5;   // body text minimum
+  --line-height-relaxed:  1.625; // long-form prose
+
+  // Letter spacing
+  --letter-spacing-tight:  -0.01em;
+  --letter-spacing-normal:  0;
+  --letter-spacing-wide:    0.025em;
+  --letter-spacing-label:   0.05em;  // for uppercase label style (11px)
+  // Note: never apply letter-spacing to Arabic text
+}
+
+
+// -----------------------------------------------------------------------------
+// 5. Z-INDEX LAYERS
+// -----------------------------------------------------------------------------
+:root {
+  --z-base:       0;
+  --z-content:    1;
+  --z-sticky:     10;
+  --z-sidebar:    20;
+  --z-backdrop:   30;
+  --z-modal:      40;
+  --z-toast:      50;
+  --z-tooltip:    60;
+}
+
+
+// -----------------------------------------------------------------------------
+// 6. BREAKPOINTS (SCSS variables — not CSS custom properties)
+// Use with respond-to() mixin from _breakpoints.scss
+// -----------------------------------------------------------------------------
+$breakpoint-mobile:   0px;
+$breakpoint-tablet:   600px;
+$breakpoint-desktop:  1024px;
+$breakpoint-wide:     1440px;
+
+$breakpoints: (
+  'mobile':   $breakpoint-mobile,
+  'tablet':   $breakpoint-tablet,
+  'desktop':  $breakpoint-desktop,
+  'wide':     $breakpoint-wide,
+);
+
+
+// -----------------------------------------------------------------------------
+// 7. SEMANTIC COLOR ALIASES
+// Maps --color-sf-* palette into semantic roles used in components.
+// All values are RGB tuples — wrap in rgba(var(--token), alpha).
+//
+// Light mode values from css-variables.css / material3-tokens.json
+// Dark mode values applied automatically via .e-dark-mode class in
+// css-variables.css — no duplicate overrides needed here.
+// -----------------------------------------------------------------------------
+:root {
+  // --- Backgrounds ---
+  // NOTE: --color-sf-* values are RGB tuples; semantic aliases wrap them in rgb().
+  --color-bg-page:          rgb(var(--color-sf-background));
+  --color-bg-surface:       rgb(var(--color-sf-surface));
+  --color-bg-surface-alt:   rgb(var(--color-sf-surface-variant));
+  --color-bg-overlay:       rgba(var(--color-sf-scrim), 0.5);
+
+  // --- Text ---
+  --color-text-primary:     rgb(var(--color-sf-on-surface));
+  --color-text-secondary:   rgb(var(--color-sf-on-surface-variant));
+  --color-text-disabled:    rgba(var(--color-sf-on-surface), 0.38);
+  --color-text-on-primary:  rgb(var(--color-sf-on-primary));
+  --color-text-inverse:     rgb(var(--color-sf-inverse-on-surface));
+
+  // --- Brand / Interactive ---
+  --color-brand:            rgb(var(--color-sf-primary));
+  --color-brand-container:  rgb(var(--color-sf-primary-container));
+  --color-brand-text:       rgb(var(--color-sf-on-primary-container));
+
+  // --- Borders ---
+  --color-border:           rgb(var(--color-sf-outline));
+  --color-border-subtle:    rgb(var(--color-sf-outline-variant));
+
+  // --- Icons ---
+  --color-icon-default:     rgb(var(--color-sf-on-surface-variant));
+  --color-icon-active:      rgb(var(--color-sf-primary));
+  --color-icon-on-primary:  rgb(var(--color-sf-on-primary));
+
+  // --- Status: Success ---
+  --color-bg-success:       rgb(var(--color-sf-success-container));
+  --color-text-success:     rgb(var(--color-sf-on-success-container));
+  --color-icon-success:     rgb(var(--color-sf-success));
+
+  // --- Status: Warning ---
+  --color-bg-warning:       rgb(var(--color-sf-warning-container));
+  --color-text-warning:     rgb(var(--color-sf-on-warning-container));
+  --color-icon-warning:     rgb(var(--color-sf-warning));
+
+  // --- Status: Error / Danger ---
+  --color-bg-error:         rgb(var(--color-sf-error-container));
+  --color-text-error:       rgb(var(--color-sf-on-error-container));
+  --color-icon-error:       rgb(var(--color-sf-error));
+  --color-bg-danger:        rgb(var(--color-sf-error-container));
+  --color-text-danger:      rgb(var(--color-sf-on-error-container));
+  --color-icon-danger:      rgb(var(--color-sf-danger));
+
+  // --- Status: Info ---
+  --color-bg-info:          rgb(var(--color-sf-info-container));
+  --color-text-info:        rgb(var(--color-sf-on-info-container));
+  --color-icon-info:        rgb(var(--color-sf-info));
+
+  // --- Interactive states ---
+  --color-hover:            rgba(var(--color-sf-on-surface), 0.08);
+  --color-pressed:          rgba(var(--color-sf-on-surface), 0.12);
+  --color-focus:            rgba(var(--color-sf-primary), 0.12);
+  --color-selected:         rgba(var(--color-sf-primary), 0.08);
+  --color-disabled-bg:      rgba(var(--color-sf-on-surface), 0.04);
+  --color-disabled-text:    rgba(var(--color-sf-on-surface), 0.38);
+}
+
+
+// -----------------------------------------------------------------------------
+// 8. LAYOUT TOKENS
+// -----------------------------------------------------------------------------
+:root {
+  // Sidebar dimensions
+  --sidebar-width-expanded:   240px;
+  --sidebar-width-collapsed:  64px;
+
+  // AppBar
+  --appbar-height:            56px;
+
+  // Content
+  --content-max-width:        1440px;
+  --content-padding-desktop:  var(--spacing-xl);   // 32px
+  --content-padding-tablet:   var(--spacing-lg);   // 24px
+  --content-padding-mobile:   var(--spacing-md);   // 16px
+
+  // Grid gutters
+  --grid-gutter-desktop:      var(--spacing-md);   // 16px
+  --grid-gutter-tablet:       var(--spacing-4);    // 12px
+  --grid-gutter-mobile:       var(--spacing-3);    // 8px
+
+  // Touch target minimum
+  --touch-target-min:         44px;
+
+  // Table row heights
+  --table-row-height-compact:  40px;
+  --table-row-height-default:  48px;
+  --table-row-height-relaxed:  56px;
+}
+
+
+// -----------------------------------------------------------------------------
+// 9. TRANSITION / ANIMATION
+// -----------------------------------------------------------------------------
+:root {
+  --duration-instant:   50ms;
+  --duration-fast:      100ms;
+  --duration-normal:    200ms;
+  --duration-slow:      300ms;
+  --duration-slower:    400ms;
+
+  --easing-standard:    cubic-bezier(0.2, 0, 0, 1);
+  --easing-decelerate:  cubic-bezier(0, 0, 0, 1);
+  --easing-accelerate:  cubic-bezier(0.3, 0, 1, 1);
+
+  --transition-default: var(--duration-normal) var(--easing-standard);
+}

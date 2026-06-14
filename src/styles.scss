@@ -1,0 +1,18 @@
+// ============================================================
+// Global Stylesheet — Khwarizmi
+//
+// Import order is intentional and must not change:
+//   1. tokens         → CSS variables (everything depends on these)
+//   2. reset          → base element resets + RTL foundation
+//   3. typography     → text utility classes
+//   4. layout         → container + layout utilities
+//   5. material-theme → Angular Material M3 theme bound to tokens
+//   6. rtl            → final RTL-specific overrides (last to win)
+// ============================================================
+
+@use './styles/tokens';
+@use './styles/reset';
+@use './styles/typography';
+@use './styles/layout';
+@use './styles/material-theme';
+@use './styles/rtl';

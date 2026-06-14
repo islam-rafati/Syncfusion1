@@ -1,0 +1,408 @@
+---
+description: Figma MCP → Angular code generation workflow for Khwarizmi — analysis protocol, output order, pre-generation checklist
+alwaysApply: true
+---
+
+# implementation-workflow.rules.mdc
+
+### A. Purpose
+Define the mandatory thinking and generation process for every Figma-to-Angular task in Khwarizmi. Cursor must follow this workflow without exception. The quality of output depends entirely on executing these steps in order — skipping any step produces lower-quality code.
+
+---
+
+### B. The Prime Directive
+
+**Never generate code as the first response to a Figma frame.**
+
+Every design frame is a composition of:
+- Component patterns from the Syncfusion Material-3 Figma Kit
+- Design tokens from `material3-tokens.json`
+- RTL layout decisions (sidebar right, content flows right-to-left)
+- Responsive behavior across mobile / tablet / desktop
+- Interaction states: default, hover, focus, active, disabled, loading, empty, error
+
+The design is a specification. Your job is to understand the specification fully before writing a single line.
+
+---
+
+### C. Pre-Generation Analysis Protocol
+
+Execute these steps in order before generating any code. Output the analysis as a structured block in the chat.
+
+#### Step 1 — Layout Detection
+
+Inspect the frame structure and answer:
+- What is the primary layout axis? (horizontal / vertical / grid)
+- Are there Auto Layout frames? → maps to Flexbox or CSS Grid
+- Is this a three-zone layout (Sidebar + AppBar + Content)? → confirm RTL placement
+- What is the content column span? (must be ≤ 10 of 12 columns)
+- What breakpoint is this design targeting? (Mobile / Tablet / Desktop)
+- What are the nested layout contexts? (e.g. content area splits into list + detail panel)
+
+#### Step 2 — Token Extraction
+
+For every visual value in the design, resolve to a Khwarizmi token:
+
+| Visual value type | Maps to |
+|---|---|
+| Fill color | `--color-sf-{role}` |
+| Text color | `--color-sf-on-{role}` |
+| Border/divider | `--color-sf-outline` or `--color-sf-outline-variant` |
+| Spacing / padding | `--spacing-{size}` (must be 8px-scale) |
+| Border radius | `--radius-{size}` |
+| Shadow / elevation | `--shadow-{size}` |
+| Font size | Khwarizmi type scale (Body Medium = 14px, Caption = 12px, etc.) |
+| Font weight | 400 / 500 / 600 / 700 only |
+
+Flag any value that does not resolve to a token — do not invent values.
+
+#### Step 3 — Component Recognition
+
+For every UI element in the frame:
+1. Identify whether it is a Syncfusion Material-3 Kit component (check Figma layer names).
+2. Map it to its Angular selector from `syncfusion.rules.mdc`.
+3. Identify its variant/state from the Figma layer properties (e.g. `Button / Contained / Primary / Default`).
+4. Identify all visible states that must be implemented (default, hover, disabled, loading, error, empty).
+
+If a UI element has no Syncfusion equivalent → document it as a custom component candidate.
+
+#### Step 4 — Pattern Identification
+
+Match the screen to one or more Khwarizmi patterns from `patterns.rules.mdc`:
+
+| If the screen is... | Apply pattern |
+|---|---|
+| Overview / home with KPIs | Dashboard Pattern |
+| Entity list + create/edit/delete | CRUD Pattern |
+| Data list + detail side panel | Master-Detail Pattern |
+| Multi-step form or onboarding | Wizard Pattern |
+| Data table with filters | Search & Filter + Tables |
+| Analytics with charts | Report Viewer Pattern |
+
+#### Step 5 — Component Tree Planning
+
+Before writing code, produce a component tree showing every Angular component that will exist, their hierarchy, and which are shared vs. feature-local.
+
+```
+[Screen name]
+├── AppShellComponent (shared — already exists)
+│   ├── ejs-appbar
+│   └── ejs-sidebar
+└── FeaturePageComponent (new — page)
+    ├── app-page-header (shared)
+    │   ├── ejs-breadcrumb
+    │   └── ejs-toolbar (page actions)
+    ├── FeatureFilterBarComponent (new — feature-private)
+    │   ├── ejs-textbox (search)
+    │   ├── ejs-dropdownlist (status filter)
+    │   └── ejs-button (clear filters)
+    ├── ejs-grid (data table)
+    │   └── [status column template] → app-status-badge (shared)
+    │   └── [action column template] → ejs-button icon-only
+    └── FeatureFormDialogComponent (new — feature-private)
+        └── ejs-dialog
+            └── FeatureFormComponent (new — feature-private)
+```
+
+#### Step 6 — Responsive Strategy
+
+State explicitly how the layout adapts:
+- **Desktop (> 1024px):** [describe columns, sidebar state, grid density]
+- **Tablet (600–1024px):** [describe column collapse, sidebar icon-only, grid scroll]
+- **Mobile (< 600px):** [describe single column, sidebar hidden/drawer, stacked cards]
+
+---
+
+### D. Output Order
+
+After the analysis block is approved (or if generating without approval is requested), produce artifacts in this exact order:
+
+```
+1. Models          → feature-name.model.ts
+2. Service         → feature-name.service.ts
+3. Child components (leaf nodes first — deepest in tree)
+   3a. [ChildComponent].component.ts
+   3b. [ChildComponent].component.html
+   3c. [ChildComponent].component.scss
+4. Page component (last — depends on all children)
+   4a. feature-name.component.ts
+   4b. feature-name.component.html
+   4c. feature-name.component.scss
+5. Route definition (if new feature)
+   5a. feature-name.routes.ts
+6. Responsive notes
+7. Accessibility notes
+```
+
+Never generate the page component before its child components. Never generate TypeScript before the model interfaces it depends on.
+
+---
+
+### E. Mandatory Output Template
+
+Every Figma-to-code response must follow this structure exactly:
+
+```markdown
+## Design Analysis — [Screen Name]
+
+### Layout
+[Layout axis, zones, column count, breakpoint]
+
+### Token Map
+| Figma Value | Token |
+|---|---|
+| [color / spacing] | --color-sf-* / --spacing-* |
+
+### Component Inventory
+| UI Element | Syncfusion Component | Angular Module |
+|---|---|---|
+| [element] | ejs-* | *Module |
+
+### Pattern
+[Which Khwarizmi pattern(s) apply]
+
+### Responsive Strategy
+- Desktop: [description]
+- Tablet: [description]
+- Mobile: [description]
+
+---
+
+## Component Tree
+[ASCII tree]
+
+---
+
+## Implementation
+
+### 1. Models
+[feature.model.ts]
+
+### 2. Service
+[feature.service.ts]
+
+### 3. [ChildComponent]
+#### TypeScript
+[component.ts]
+#### Template
+[component.html]
+#### SCSS
+[component.scss]
+
+### 4. [PageComponent]
+#### TypeScript
+[component.ts]
+#### Template
+[component.html]
+#### SCSS
+[component.scss]
+
+### 5. Routes
+[feature.routes.ts]
+
+---
+
+## Accessibility Notes
+[ARIA additions, keyboard nav, focus management decisions]
+
+---
+
+## Quality Gate
+- [ ] All items from frontend-architecture.rules.mdc checklist
+```
+
+---
+
+### F. Figma MCP Specific Rules
+
+When receiving a Figma frame via Figma MCP:
+
+**Do:**
+- Read the exact Figma component/frame name to identify which Syncfusion Kit component it is.
+- Extract variant props from the Figma layer name (e.g. `Button / Filled / Primary / Enabled` → `ejs-button cssClass="e-primary"`).
+- Detect Auto Layout direction → map directly to `display: flex` or `display: grid`.
+- Detect `Fill` vs `Hug` vs `Fixed` sizing on frames → map to `flex: 1`, `width: fit-content`, `width: [fixed]px`.
+- Detect spacing between items in Auto Layout → resolve to nearest `--spacing-*` token.
+
+**Don't:**
+- Never infer color from visual appearance alone — read the fill token from the Figma design properties.
+- Never hardcode pixel values seen in Figma — always resolve to the token scale.
+- Never skip the analysis phase because the design "looks simple".
+- Never generate code for a screen that hasn't been mapped to a Khwarizmi pattern.
+
+---
+
+### G. Decision Trees
+
+#### "What layout component do I need?"
+```
+Is this a full-page layout with sidebar?
+  YES → ejs-sidebar (right, Push type) + ejs-appbar + content area
+  NO → Is this a split content area (list + detail)?
+    YES → ejs-splitter (RTL: list panel right, detail panel left)
+    NO → Is this a dashboard with resizable panels?
+      YES → ejs-dashboardlayout
+      NO → Standard CSS grid with layout tokens
+```
+
+#### "What input component do I need?"
+```
+Is it a date or time value?
+  YES → ejs-datepicker / ejs-daterangepicker / ejs-datetimepicker / ejs-timepicker
+  NO → Is it a selection from a list?
+    YES → ≤5 options? → ejs-radiobutton
+          Long list + search? → ejs-combobox
+          Long list no search? → ejs-dropdownlist
+          Multi-select? → ejs-multiselect
+          Hierarchical? → ejs-dropdowntree
+    NO → Is it a number?
+      YES → ejs-numerictextbox
+      NO → Is it a formatted value (phone, ID)?
+        YES → ejs-maskedtextbox
+        NO → Is it long text?
+          YES → ejs-textbox [multiline]="true"
+          NO → ejs-textbox
+```
+
+#### "What feedback component do I need?"
+```
+Is it after a completed action (save, delete, create)?
+  YES → ejs-toast (auto-dismisses in 5s)
+  NO → Is it a persistent inline message within the page?
+    YES → ejs-message
+    NO → Is it a loading state for a content area?
+      YES → ejs-skeleton
+      NO → Is it a loading state for a button/inline action?
+        YES → ejs-spinner inside ejs-button
+        NO → Is it a long-running operation with progress?
+          YES → ejs-progressbar
+          NO → Is it a count or status indicator on a nav item?
+            YES → ejs-badge
+```
+
+#### "Does this need a dialog or a new page?"
+```
+Is the form ≤ 10 fields?
+  YES → ejs-dialog with form inside
+  NO → Is it a multi-step flow?
+    YES → New page with ejs-stepper
+    NO → New page (full-page form)
+```
+
+#### "Is this a new component or a shared one?"
+```
+Is this UI pattern used in 2+ places in the product?
+  YES → shared/components/
+  NO → Is it a UI pattern used across 2+ Khwarizmi products?
+    YES → shared/components/ (design system candidate)
+    NO → features/[feature]/components/
+```
+
+---
+
+### H. Forbidden Shortcuts
+
+These shortcuts are never acceptable regardless of deadline, complexity, or user request:
+
+- **Generating code without the analysis block** — analysis is not optional.
+- **Skipping the component tree** — it prevents catching structural mistakes before writing code.
+- **Using a non-Syncfusion component** when a Syncfusion equivalent exists — even "just for now".
+- **Hardcoding any value** that belongs in the token system — even spacing.
+- **Generating LTR layout and saying "mirror for Arabic"** — RTL-first always.
+- **Using `any` type** to unblock a stuck type problem — use `unknown` + narrowing.
+- **Putting HTTP calls in components** — always delegated to a service.
+- **Generating NgModules** — standalone only.
+- **Skipping the quality gate** — run it on every output, even small changes.
+
+---
+
+### I. Example Analysis Block
+
+```markdown
+## Design Analysis — User Management Screen
+
+### Layout
+Three-zone layout: SfSidebar (right, RTL) + SfAppBar (top) + Content area.
+Content: 10/12 columns, desktop target.
+Content area: toolbar row (search + filter + actions) → data grid.
+
+### Token Map
+| Figma Value | Token |
+|---|---|
+| Background fill | --color-sf-surface |
+| Header fill | --color-sf-surface-variant |
+| Primary button fill | --color-sf-primary |
+| Divider stroke | --color-sf-outline-variant |
+| Row padding | --spacing-md (16px) |
+| Section gap | --spacing-lg (24px) |
+| Card radius | --radius-md (8px) |
+
+### Component Inventory
+| UI Element | Syncfusion Component | Module |
+|---|---|---|
+| Search field | ejs-textbox | TextBoxModule |
+| Status filter | ejs-dropdownlist | DropDownListModule |
+| User table | ejs-grid | GridModule |
+| Status cell | ejs-badge (via template) | — |
+| Row actions | ejs-button icon-only | ButtonModule |
+| Create dialog | ejs-dialog | DialogModule |
+| Success feedback | ejs-toast | ToastModule |
+| Delete confirm | ejs-dialog (Confirm) | DialogModule |
+| Loading state | ejs-skeleton | SkeletonModule |
+
+### Pattern
+CRUD Pattern + Search & Filter Pattern
+
+### Responsive Strategy
+- Desktop: sidebar expanded (240px), full grid with 6 columns visible
+- Tablet: sidebar icon-only (64px), grid scrolls horizontally, 4 columns visible
+- Mobile: sidebar hidden (drawer), grid shows 2 columns + column chooser
+
+---
+
+## Component Tree
+UsersListComponent (page)
+├── app-page-header (shared)
+│   ├── ejs-breadcrumb
+│   └── ejs-toolbar [إضافة مستخدم]
+├── UsersFilterBarComponent (feature-private)
+│   ├── ejs-textbox (search)
+│   ├── ejs-dropdownlist (status)
+│   └── ejs-button (clear)
+├── ejs-grid
+│   ├── [status col template] → app-status-badge (shared)
+│   └── [action col template] → ejs-button icon-only
+├── UserFormDialogComponent (feature-private)
+│   └── ejs-dialog → UserFormComponent
+└── app-confirm-dialog (shared) [delete confirmation]
+```
+
+---
+
+### J. Rule Conflict Resolution
+
+When rules appear to conflict, apply this priority order:
+
+1. `khwarizmi-design-system.rules.mdc` — master overrides all
+2. `vision.rules.mdc` — philosophical foundation
+3. `tokens.rules.mdc` — token system is non-negotiable
+4. `implementation-workflow.rules.mdc` — this file
+5. `angular.rules.mdc` + `syncfusion.rules.mdc` — implementation rules
+6. `frontend-architecture.rules.mdc` — structural rules
+7. Domain rules (`forms`, `tables`, `navigation`, etc.) — domain-specific
+8. User request — only after all rules are satisfied
+
+If a user request conflicts with rules 1–4, flag the conflict and propose a compliant alternative rather than violating the rule.
+
+---
+
+### K. File Output Rule
+- Write all files directly to disk at their correct project paths.
+- Do not output code blocks in chat.
+- Do not ask for confirmation before writing files.
+- Chat output is limited to: Design Analysis block, Component Tree, 
+  and a post-write summary table (file path + ✓/✗).
+- If dependencies are missing, install them. Do not ask.
+- If app-level wiring is required for the feature to compile, do it. Do not ask.
+- Install all required Syncfusion packages for the feature in a single npm install call.
+- Never leave the build in a broken state.

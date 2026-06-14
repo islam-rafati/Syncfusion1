@@ -1,0 +1,78 @@
+// App bar: white rounded surface, 56px tall, subtle bottom shadow.
+:host {
+  display: block;
+}
+
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding-inline: var(--spacing-md); // 16px (Figma px16)
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-lg);
+  border-block-end: 1px solid #e0e0e5; // Figma header bottom hairline
+  // Matches the Figma $appbar-bottom-shadow (soft, downward).
+  box-shadow:
+    0 0.3px 0.9px rgba(0, 0, 0, 0.1),
+    0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+
+  &__start,
+  &__end {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  // Logo chip: rounded square, light primary tint.
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background-color: rgb(var(--color-sf-primary-container));
+    color: var(--color-brand);
+  }
+
+  &__title {
+    margin-inline-start: var(--spacing-xs);
+    font-size: var(--typo-size-text-lg); // 16px Title/medium
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  // Icon buttons: 32px, slightly-rounded square (Figma btn-small-radius 4px).
+  &__icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm); // 4px
+    background-color: transparent;
+    color: var(--color-icon-default);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: rgba(var(--color-sf-on-surface), 0.06);
+    }
+
+    // Hamburger: persistent light-gray fill (on-surface 12%).
+    &--filled {
+      background-color: rgba(var(--color-sf-on-surface), 0.12);
+    }
+  }
+
+  // Circular photo avatar.
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    margin-inline-start: var(--spacing-xs);
+    border-radius: var(--radius-full);
+    object-fit: cover;
+  }
+}

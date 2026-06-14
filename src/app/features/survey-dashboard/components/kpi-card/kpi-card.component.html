@@ -1,0 +1,19 @@
+<!-- KPI tile: 2px colored bar + white card (icon, title, value, desc). -->
+<article class="kpi" [class]="semanticClass()">
+  <span class="kpi__bar" aria-hidden="true"></span>
+
+  <div class="kpi__card">
+    <span class="kpi__icon" aria-hidden="true">
+      <app-icon [name]="kpi().icon" [size]="20" />
+    </span>
+
+    <div class="kpi__text">
+      <div class="kpi__head">
+        <h3 class="kpi__title">{{ kpi().title }}</h3>
+        <!-- Primary value: the dominant element. -->
+        <p class="kpi__value">{{ kpi().value }}</p>
+      </div>
+      <p class="kpi__desc">{{ kpi().description }}</p>
+    </div>
+  </div>
+</article>

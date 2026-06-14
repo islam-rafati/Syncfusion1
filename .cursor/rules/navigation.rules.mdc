@@ -1,0 +1,94 @@
+---
+globs: **/nav/**, **/sidebar/**, **/header/**
+alwaysApply: false
+---
+# navigation.rules.mdc
+
+### A. Purpose
+Define consistent navigation architecture using Syncfusion UI Kit — Material-3 Theme components exclusively.
+
+### B. Rules
+
+**Architecture:**
+- Primary navigation: `SfSidebar` (right side, RTL-first)
+- Secondary in-section navigation: `SfTab`
+- Breadcrumb: `SfBreadcrumb` — mandatory on all pages > one level deep
+- App Bar: `SfAppBar` — fixed top, always visible
+- Context actions: `SfToolbar` above content area — not in App Bar
+- Sequential flows: `SfStepper`
+- Hierarchical data navigation: `SfTreeView`
+
+**SfSidebar Rules:**
+- Three states: Expanded (with labels) / Collapsed (icons only) / Hidden (mobile drawer)
+- Expanded width: 240px. Collapsed width: 64px.
+- Use `SfSidebar` with `type='Push'` (desktop) / `type='Over'` (mobile)
+- `enableRtl={true}` positions sidebar on right automatically
+- Max two navigation levels. Third level uses sub-page or `SfTab`.
+- Group items under section headers: 8px between items, 16px between groups
+- Active item: `--color-sf-primary-container` bg + `--color-sf-on-primary-container` text (Material-3 handles)
+- Badge counts on sidebar items: use `SfBadge`
+- Icons mandatory for all items — `SfSidebar` supports icon + label per item
+
+**SfAppBar Rules:**
+- Height: 56px fixed — use `SfAppBar` component
+- Always visible — `position='Top'` + sticky
+- RTL: logo/product name at far right, user profile at far left (automatic with `enableRtl`)
+- Global search: `SfAutoComplete` in AppBar center
+- Notifications: icon button + `SfBadge` for unread count
+- User profile: `SfAvatar` + `SfDropDownButton`
+
+**SfTab Rules:**
+- Use for parallel content sections — not sequential steps (use `SfStepper` for steps)
+- Max 6 tabs — overflow handled by `SfTab` scroll mode
+- Active tab: `--color-sf-primary` underline, 2px (Material-3 theme handles)
+- Tab width: auto content-based, min 80px, max 160px
+- Keyboard: Arrow Left/Right navigation built into `SfTab` with RTL awareness
+
+**SfBreadcrumb Rules:**
+- Place below `SfAppBar`, above page title
+- Last item = current page (not a link) — use `disabled` on last item
+- Max 4 levels — `SfBreadcrumb` handles overflow with `maxItems` prop
+- RTL separator handled automatically with `enableRtl`
+
+**Other Component Rules:**
+- `SfAccordion` → expandable content groups in side panels, settings — NOT primary navigation
+- `SfContextMenu` → row-level / element-level quick actions only
+- `SfMenu` → application-level menu systems (document editors, complex tools)
+- `SfTreeView` → hierarchical data navigation (file systems, org charts, categories)
+- `SfStepper` → sequential multi-step workflows only — never for parallel content
+- `SfCarousel` → content presentation only — never navigation
+
+**RTL:**
+- All Syncfusion navigation components respect `enableRtl(true)` globally.
+- Do not manually mirror navigation layouts.
+
+**Accessibility:**
+- `SfSidebar` includes `role="navigation"` by default.
+- `SfBreadcrumb` uses `aria-label="breadcrumb"` and `aria-current="page"` automatically.
+- `SfTab` keyboard navigation (Arrow keys, Tab, Enter) is built in.
+- Skip navigation link: add manually at page top for keyboard users.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfSidebar` as primary navigation on all enterprise screens.
+- ✅ Use `SfTab` for switching between parallel views.
+- ✅ Show `SfBreadcrumb` on all pages below root level.
+- ✅ Use `SfStepper` for sequential workflows.
+- ✅ Collapse `SfSidebar` to icon-only on tablet via `isOpen` prop control.
+
+**Don't:**
+- ❌ Do not use > 2 navigation levels in `SfSidebar`.
+- ❌ Do not use `SfAccordion` as primary navigation.
+- ❌ Do not mix `SfTab` and `SfStepper` for the same pattern.
+- ❌ Do not place action buttons in `SfAppBar` — use `SfToolbar`.
+- ❌ Do not use `SfCarousel` for section navigation.
+- ❌ Do not manually style navigation components — use Material-3 theme tokens.
+
+### D. MCP Usage Guidance
+- When generating a new application screen, auto-generate: `SfSidebar` (right, RTL), `SfAppBar` (top, fixed), content area.
+- When generating multi-section content, auto-add `SfTab` at top of content zone.
+- When generating hierarchical navigation, use `SfTreeView` inside `SfSidebar`.
+- When generating multi-step flows, auto-select `SfStepper`.
+- When generating AppBar: product name (right), `SfAutoComplete` search (center), notification + `SfAvatar` (left) for RTL.
+- All Syncfusion navigation components: pass `enableRtl={true}` prop or rely on global `enableRtl(true)` bootstrap.

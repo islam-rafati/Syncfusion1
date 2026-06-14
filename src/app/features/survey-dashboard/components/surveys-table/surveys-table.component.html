@@ -1,0 +1,120 @@
+<!-- Survey table: 10 fixed columns, lavender header, 52px data rows. -->
+<table class="grid">
+  <colgroup>
+    <col class="grid__col-name" />
+    <col class="grid__col-lang" />
+    <col class="grid__col-date" />
+    <col class="grid__col-date" />
+    <col class="grid__col-source" />
+    <col class="grid__col-participants" />
+    <col class="grid__col-status" />
+    <col class="grid__col-favorite" />
+    <col class="grid__col-reports" />
+    <col class="grid__col-actions" />
+  </colgroup>
+
+  <thead>
+    <tr class="grid__head">
+      <th class="grid__th">Survey Name</th>
+      <th class="grid__th">Languages</th>
+      <th class="grid__th">Start Date</th>
+      <th class="grid__th">End Date</th>
+      <th class="grid__th">Data Source</th>
+      <th class="grid__th">Participants</th>
+      <th class="grid__th">Status</th>
+      <th class="grid__th">Favorite</th>
+      <th class="grid__th">Reports</th>
+      <th class="grid__th">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (row of rows(); track row.id) {
+      <tr class="grid__row">
+        <td class="grid__td grid__name">{{ row.name }}</td>
+
+        <td class="grid__td">
+          <span class="lang-badge">{{ row.languagesLabel }}</span>
+        </td>
+
+        <td class="grid__td grid__muted">{{ row.startDateLabel }}</td>
+        <td class="grid__td grid__muted">{{ row.endDateLabel }}</td>
+
+        <td class="grid__td grid__td--center grid__source">
+          <app-icon [name]="row.dataSourceIcon" [size]="20" />
+        </td>
+
+        <td class="grid__td">{{ row.participantsLabel }}</td>
+
+        <td class="grid__td">
+          @if (row.statusHasFill) {
+            <span class="status status--{{ row.statusVariant }}">
+              {{ row.statusLabel }}
+            </span>
+          } @else {
+            <span class="status status--plain">{{ row.statusLabel }}</span>
+          }
+        </td>
+
+        <!-- Favorite: filled purple star when favorited, outline otherwise. -->
+        <td class="grid__td grid__td--center">
+          <button
+            type="button"
+            class="icon-btn"
+            [class.icon-btn--fav]="row.isFavorite"
+            [attr.aria-label]="row.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+            [attr.aria-pressed]="row.isFavorite"
+            (click)="favoriteToggle.emit(row.id)"
+          >
+            <app-icon [name]="row.isFavorite ? 'star' : 'star-border'" [size]="20" />
+          </button>
+        </td>
+
+        <!-- Reports -->
+        <td class="grid__td grid__td--center">
+          <button
+            type="button"
+            class="icon-btn icon-btn--report"
+            aria-label="Open report"
+            (click)="reportOpen.emit(row.id)"
+          >
+            <app-icon name="assessment" [size]="22" />
+          </button>
+        </td>
+
+        <!-- Actions: three-dots button opens the overflow menu. -->
+        <td class="grid__td grid__td--center grid__actions">
+          <button
+            type="button"
+            class="icon-btn"
+            aria-label="Row actions"
+            [attr.aria-expanded]="openMenuId() === row.id"
+            (click)="onActionClick(row.id)"
+          >
+            <app-icon name="more-vert" [size]="22" />
+          </button>
+
+          @if (openMenuId() === row.id) {
+            <!-- Click-outside backdrop closes the menu. -->
+            <div class="menu-backdrop" (click)="closeMenu()"></div>
+
+            <div class="menu" role="menu">
+              @for (item of menuItems; track item.action) {
+                <button
+                  type="button"
+                  class="menu__item"
+                  [class.menu__item--danger]="item.danger"
+                  role="menuitem"
+                  (click)="onMenuItem(item.action, row.id)"
+                >
+                  <app-icon [name]="item.icon" [size]="18" />
+                  <span>{{ item.label }}</span>
+                </button>
+              }
+            </div>
+          }
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

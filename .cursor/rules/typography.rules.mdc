@@ -1,0 +1,58 @@
+---
+alwaysApply: false
+---
+
+# typography.rules.mdc
+
+### A. Purpose
+Establish a consistent, scalable type system for all Khwarizmi products. Ensures readability, hierarchy, and Arabic-first typographic behavior across enterprise interfaces.
+
+### B. Rules
+- Typography must follow a **modular scale** — no arbitrary font sizes.
+- Defined scale (in px / rem):
+  - **Display**: 57px / 3.5625rem — hero headings only
+  - **H1**: 32px / 2rem
+  - **H2**: 24px / 1.5rem
+  - **H3**: 20px / 1.25rem
+  - **H4**: 16px / 1rem (semibold)
+  - **Body Large**: 16px / 1rem (regular)
+  - **Body Medium**: 14px / 0.875rem (regular)
+  - **Body Small / Caption**: 12px / 0.75rem
+  - **Label**: 11px / 0.6875rem (uppercase, tracked)
+- Line height: 1.5× font size minimum for body text; 1.2× for headings.
+- Arabic typeface must be explicitly specified and must be an enterprise-grade Arabic font (e.g. Cairo, IBM Plex Arabic, Noto Kufi Arabic).
+- Latin typeface pairing must complement the Arabic face (e.g. Inter, IBM Plex Sans).
+- Font weight scale: 400 (regular), 500 (medium), 600 (semibold), 700 (bold) only.
+- No decorative or display fonts in data-heavy interfaces.
+- Text on colored backgrounds must use the corresponding `--color-sf-on-{role}` token.
+- Do not justify Arabic text in UI components — use `start` alignment (right for RTL).
+- Truncation with ellipsis must be applied to all single-line overflow situations.
+- Minimum body text size: 14px for desktop, 16px for mobile.
+- Line length for readable prose: 60–80 characters (max 90).
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use H1–H4 in strict hierarchy — never skip levels.
+- ✅ Apply Arabic font to all Arabic content, including labels and placeholders.
+- ✅ Use Body Medium (14px) as the default for tables, forms, and list items.
+- ✅ Use Caption (12px) for metadata, timestamps, helper text.
+- ✅ Use Label (11px uppercase) for column headers and section dividers.
+- ✅ Apply `font-feature-settings: "kern", "liga"` for Arabic shaping support.
+
+**Don't:**
+- ❌ Do not use font sizes outside the defined scale.
+- ❌ Do not center-align Arabic paragraph text.
+- ❌ Do not use italic for Arabic — it is not a valid Arabic typographic style.
+- ❌ Do not apply letter-spacing to Arabic text.
+- ❌ Do not use more than two typefaces in a single interface.
+- ❌ Do not use font weight 300 (light) in enterprise interfaces — it reduces readability.
+
+### D. MCP Usage Guidance
+- When generating text elements, always assign the correct type scale role (H1, Body Medium, Caption, etc.).
+- Detect language context: apply Arabic typeface for RTL content, Latin typeface for LTR.
+- When generating table headers, default to Label style (11px uppercase, semibold).
+- When generating form labels, use Body Small (12px, medium weight).
+- Do not infer font size from visual appearance — always reference the scale.
+
+---

@@ -1,0 +1,53 @@
+---
+globs: **/*.tsx, **/*.jsx, **/*.vue
+alwaysApply: false
+---
+# layouts.rules.mdc
+
+### A. Purpose
+Define the structural layout system for all Khwarizmi enterprise interfaces. Ensures consistent, accessible, and scalable screen architecture across all RealSoft products.
+
+### B. Rules
+- Every layout MUST use a 12-column grid system.
+- Column gutter is 16px on desktop, 12px on tablet, 8px on mobile.
+- All layouts MUST follow the three-zone structure: **Sidebar + Header (App Bar) + Main Content**.
+- Sidebar is always on the **right side** (RTL-first).
+- Header/App Bar is always fixed at the top.
+- Content area must be scrollable independently from the sidebar and header.
+- Breakpoints:
+  - **Mobile**: < 600px — single column, hidden sidebar (drawer)
+  - **Tablet**: 600px–1024px — 4-column grid, collapsible sidebar
+  - **Desktop**: > 1024px — 12-column grid, persistent sidebar
+- Page content must never span full 12 columns — use 10 or fewer for readability.
+- Dashboard layouts MUST place KPI summary cards at the top of the content area.
+- No floating elements that obscure primary content except modals and toasters.
+- Z-index layers: Base (0) → Content (1) → Sticky elements (10) → Sidebar (20) → Modal backdrop (30) → Modal (40) → Toaster (50).
+- Content regions must have clear visual separation using surface tokens, not borders alone.
+- Minimum touch target for interactive areas: 44×44px.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use the sidebar-header-content three-zone architecture on every screen.
+- ✅ Design RTL layouts natively — sidebar on right, content flows right to left.
+- ✅ Collapse sidebar to icon-only mode on tablet; hide entirely on mobile.
+- ✅ Use 12-column grid with consistent gutters.
+- ✅ Keep header persistent and visible at all times.
+- ✅ Leave a minimum of 8px padding on all layout edges.
+
+**Don't:**
+- ❌ Do not create LTR-mirrored layouts and reverse them for Arabic.
+- ❌ Do not use fixed pixel widths for content containers.
+- ❌ Do not create fullscreen single-column layouts for desktop.
+- ❌ Do not nest grid systems inside grid columns beyond two levels.
+- ❌ Do not stack the sidebar below the main content on any viewport.
+- ❌ Do not create one-off layouts not based on the 12-column grid.
+
+### D. MCP Usage Guidance
+- When generating UI in Figma MCP or Cursor, always apply the three-zone layout template first.
+- Auto-detect RTL context and apply right-side sidebar placement.
+- When generating a dashboard screen, place KPI cards in the first content row, charts in the second, and tables below.
+- When generating mobile views, always switch to a drawer-based sidebar and single-column grid.
+- Do not deviate from layout zones without an explicit override instruction from the designer.
+
+---

@@ -1,0 +1,5 @@
+// Badge visuals come entirely from the Syncfusion theme.
+// Host stays inline so the pill flows naturally inside a grid cell.
+:host {
+  display: inline-flex;
+}

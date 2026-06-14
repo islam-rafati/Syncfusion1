@@ -1,0 +1,106 @@
+// Collapsible side navigation. All colors/spacing from tokens.
+// RTL-aware: uses logical border (inline-start) so it sits correctly
+// on the right edge of the content in an RTL layout.
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  width: var(--width-xxs); // 320px expanded
+  height: 100vh;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background-color: var(--color-bg-white);
+  border-inline-start: 1px solid var(--color-border-neutral-secondary);
+  transition: width 0.2s ease;
+
+  // Collapsed: narrow, icon-only, centered.
+  &--collapsed {
+    width: var(--spacing-9xl); // 96px
+    align-items: center;
+  }
+
+  // ─── Brand ───────────────────────────────────────────────
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding-inline: var(--spacing-md);
+  }
+
+  &__brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-5xl); // 40px
+    height: var(--spacing-5xl);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-oncolor);
+    font-size: var(--typo-size-text-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  &__brand-name {
+    font-size: var(--typo-size-text-xl);
+    line-height: var(--line-height-text-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-display);
+  }
+
+  // ─── Navigation ──────────────────────────────────────────
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background-color: var(--color-bg-primary-50);
+      color: var(--color-text-teal);
+    }
+
+    // Active route state (set by routerLinkActive).
+    &--active {
+      background-color: var(--color-bg-primary-50);
+      color: var(--color-text-teal);
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: var(--color-icon-500);
+  }
+
+  // Icon follows the link's brand color on hover/active.
+  &__link:hover &__icon,
+  &__link--active &__icon {
+    color: var(--color-icon-primary);
+  }
+
+  &__label {
+    font-size: var(--typo-size-text-md);
+    line-height: var(--line-height-text-md);
+    white-space: nowrap;
+  }
+}
+
+// Mobile: turn the sidebar into a horizontal, scrollable strip.
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-inline-start: none;
+    border-bottom: 1px solid var(--color-border-neutral-secondary);
+  }
+}

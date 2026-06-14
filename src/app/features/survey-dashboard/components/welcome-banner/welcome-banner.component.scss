@@ -1,0 +1,131 @@
+// Welcome banner: branded lavender→white gradient, rounded 16px, elevated.
+:host {
+  display: block;
+}
+
+.welcome {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 156px;
+  border: 1px solid var(--color-border-subtle); // outline-variant hairline
+  border-radius: var(--radius-xl); // 16px
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  // Soft brand gradient: lavender (start) → white (end), exact Figma stops.
+  background-image: linear-gradient(
+    120deg,
+    rgb(234, 221, 255) 0%,
+    rgb(244, 239, 255) 39%,
+    rgb(255, 255, 255) 71%
+  );
+
+  // Faint decorative watermark, vertically centered near the end edge.
+  &__watermark {
+    position: absolute;
+    inset-inline-end: 55px;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    color: var(--color-brand);
+    opacity: 0.06;
+    pointer-events: none;
+  }
+
+  // Top block: 28px inset on top/sides, 8px below; 20px title → subtitle.
+  &__top {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 28px 28px 8px;
+    z-index: 1;
+  }
+
+  // Title: 26px bold in deep brand purple (on-primary-container).
+  &__title {
+    margin: 0;
+    font-size: 26px;
+    line-height: 20px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-brand-text);
+    letter-spacing: 0.24px;
+    white-space: nowrap;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: var(--typo-size-text-md); // 14px
+    line-height: 16px;
+    color: var(--color-text-primary);
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+  }
+
+  // Bottom action row: 64px tall, aligned to the end, 12px gap.
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    height: 64px;
+    padding: 8px 28px 24px;
+    z-index: 1;
+  }
+
+  // Outlined "Last updated today" pill at the top-end corner.
+  &__badge {
+    position: absolute;
+    inset-block-start: 22px;
+    inset-inline-end: 28px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding-inline: 10px;
+    border: 1px solid rgb(var(--color-sf-outline));
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+  }
+}
+
+// Pill buttons reproducing the Syncfusion Material-3 button styles.
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  padding-inline: 12px;
+  border-radius: var(--radius-full); // pill
+  font-size: var(--typo-size-text-md); // 14px
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.1px;
+  line-height: 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease;
+
+  &--primary {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: var(--color-text-on-primary);
+
+    &:hover {
+      background-color: rgb(var(--color-sf-primary-darken-opacity-5));
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
+    border-color: rgb(var(--color-sf-outline));
+    color: var(--color-text-primary);
+
+    &:hover {
+      background-color: rgba(var(--color-sf-on-surface), 0.06);
+    }
+  }
+}

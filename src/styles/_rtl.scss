@@ -1,0 +1,17 @@
+// ============================================================
+// Direction Overrides — Khwarizmi
+// The app is LTR English (dir="ltr" on <html>).
+// This layer holds explicit alignment defaults. Loaded last
+// so it wins over component-level alignment.
+// ============================================================
+
+// Default content alignment for the LTR layout.
+body {
+  text-align: left;
+}
+
+// Icons that imply direction (arrows, chevrons) flip in RTL.
+// Add this class to any directional icon that should mirror.
+.icon-flip-rtl {
+  transform: scaleX(-1);
+}

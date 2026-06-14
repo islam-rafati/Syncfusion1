@@ -1,0 +1,548 @@
+---
+description: Syncfusion Angular component rules for Khwarizmi — ejs-* selectors, module imports, RTL, Material-3 theme, Angular-specific API
+alwaysApply: true
+---
+
+# syncfusion.rules.mdc
+
+### A. Purpose
+Define how every Syncfusion component is used in Angular across all Khwarizmi products. This file translates the design-system component map into Angular-specific implementation rules: `ejs-*` selectors, module imports, property binding syntax, RTL setup, and forbidden patterns.
+
+The design-system component map (Figma Kit → Sf component name) lives in `components.rules.mdc`.
+This file governs **how to write that code in Angular**.
+
+---
+
+### B. Angular Bootstrap — Required for Every Project
+
+```typescript
+// main.ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { enableRtl, L10n, setCulture } from '@syncfusion/ej2-base';
+import { registerLicense } from '@syncfusion/ej2-base';
+import arLocale from './assets/locales/ar.json';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
+
+// 1. License
+registerLicense('YOUR_SYNCFUSION_LICENSE_KEY');
+
+// 2. RTL + Arabic locale — always before bootstrapApplication
+enableRtl(true);
+setCulture('ar');
+L10n.load({ ar: arLocale });
+
+bootstrapApplication(AppComponent, appConfig);
+```
+
+```html
+<!-- index.html root element -->
+<html dir="rtl" lang="ar">
+  <body class="e-khwarizmi">
+    <!-- dark mode: add class="e-khwarizmi e-dark-mode" -->
+    <app-root></app-root>
+  </body>
+</html>
+```
+
+```scss
+/* styles.scss — global, not per-component */
+@import '@syncfusion/ej2/material3.css';
+```
+
+**Rules:**
+- `enableRtl(true)` must be called before `bootstrapApplication` — never inside a component.
+- `setCulture('ar')` and `L10n.load()` must precede bootstrap — not in `ngOnInit`.
+- Material-3 CSS imported once globally — never `@import` inside a component SCSS.
+- Dark mode: toggle `.e-dark-mode` class on `<body>` or `<html>` — Syncfusion responds automatically.
+
+---
+
+### C. Angular Module Import Reference
+
+Import only modules used in the component's `imports: []` array. Never assume global registration.
+
+```typescript
+// Buttons
+import { ButtonModule, CheckBoxModule, RadioButtonModule, SwitchModule,
+         ChipListModule, FabModule, SpeedDialModule, SplitButtonModule,
+         DropDownButtonModule } from '@syncfusion/ej2-angular-buttons';
+
+// Inputs
+import { TextBoxModule, NumericTextBoxModule, MaskedTextBoxModule,
+         SliderModule, ColorPickerModule, UploaderModule,
+         RatingModule, OtpInputModule, SignatureModule } from '@syncfusion/ej2-angular-inputs';
+
+// Dropdowns
+import { DropDownListModule, MultiSelectModule, ComboBoxModule,
+         AutoCompleteModule, DropDownTreeModule, ListBoxModule,
+         MentionModule, MultiColumnComboBoxModule } from '@syncfusion/ej2-angular-dropdowns';
+
+// Grids
+import { GridModule, PageService, SortService, FilterService,
+         EditService, ToolbarService, ExcelExportService, PdfExportService,
+         ColumnChooserService, VirtualScrollService, ResizeService,
+         ReorderService, FreezeService } from '@syncfusion/ej2-angular-grids';
+import { TreeGridModule } from '@syncfusion/ej2-angular-treegrid';
+import { PivotViewModule } from '@syncfusion/ej2-angular-pivotview';
+import { SpreadsheetModule } from '@syncfusion/ej2-angular-spreadsheet';
+
+// Calendars / Date
+import { DatePickerModule, DateRangePickerModule, DateTimePickerModule,
+         TimePickerModule, CalendarModule } from '@syncfusion/ej2-angular-calendars';
+
+// Popups
+import { DialogModule, TooltipModule } from '@syncfusion/ej2-angular-popups';
+
+// Navigations
+import { SidebarModule, TabModule, AccordionModule, TreeViewModule,
+         BreadcrumbModule, MenuModule, ToolbarModule, AppBarModule,
+         StepperModule, CarouselModule, ContextMenuModule } from '@syncfusion/ej2-angular-navigations';
+
+// Notifications
+import { ToastModule, MessageModule, SkeletonModule } from '@syncfusion/ej2-angular-notifications';
+import { ProgressBarModule } from '@syncfusion/ej2-angular-progressbar';
+
+// Layouts
+import { CardModule, ListViewModule, SplitterModule, DashboardLayoutModule,
+         TimelineModule, AvatarModule } from '@syncfusion/ej2-angular-layouts';
+
+// Charts
+import { ChartModule, AccumulationChartModule, ChartAllModule } from '@syncfusion/ej2-angular-charts';
+import { CircularGaugeModule } from '@syncfusion/ej2-angular-circulargauge';
+import { LinearGaugeModule } from '@syncfusion/ej2-angular-lineargauge';
+
+// Editors / Viewers
+import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
+import { ScheduleModule } from '@syncfusion/ej2-angular-schedule';
+import { KanbanModule } from '@syncfusion/ej2-angular-kanban';
+import { GanttModule } from '@syncfusion/ej2-angular-gantt';
+import { PdfViewerModule } from '@syncfusion/ej2-angular-pdfviewer';
+import { DocumentEditorModule } from '@syncfusion/ej2-angular-documenteditor';
+import { ImageEditorModule } from '@syncfusion/ej2-angular-image-editor';
+import { InPlaceEditorModule } from '@syncfusion/ej2-angular-inplace-editor';
+import { QueryBuilderModule } from '@syncfusion/ej2-angular-querybuilder';
+import { AIAssistViewModule } from '@syncfusion/ej2-angular-interactive-chat';
+import { BarcodeGeneratorModule } from '@syncfusion/ej2-angular-barcode-generator';
+```
+
+---
+
+### D. Component Selector & Binding Rules
+
+All Syncfusion Angular components use `ejs-` selectors. **Always use property binding `[prop]` — not HTML attributes.**
+
+#### Buttons
+
+```html
+<!-- Primary action -->
+<button ejs-button cssClass="e-primary" (click)="onSave()">حفظ</button>
+
+<!-- Icon + label -->
+<button ejs-button cssClass="e-primary" iconCss="e-icons e-save" iconPosition="Right">
+  حفظ
+</button>
+
+<!-- Icon only -->
+<button ejs-button iconCss="e-icons e-edit" [isToggle]="false"
+        aria-label="تعديل" title="تعديل"></button>
+
+<!-- Disabled -->
+<button ejs-button [disabled]="isSaving()">حفظ</button>
+
+<!-- Loading state — spinner inside button -->
+<button ejs-button cssClass="e-primary" [disabled]="isSaving()">
+  @if (isSaving()) { <span class="e-spinner-pane"></span> }
+  حفظ
+</button>
+
+<!-- Split button -->
+<ejs-splitbutton content="إجراءات" [items]="actionItems"
+                 (click)="onPrimary()" (select)="onMenuSelect($event)" />
+
+<!-- Chip list -->
+<ejs-chiplist>
+  <e-chips>
+    <e-chip text="نشط" cssClass="e-success"></e-chip>
+    <e-chip text="معلق" cssClass="e-warning"></e-chip>
+  </e-chips>
+</ejs-chiplist>
+```
+
+#### Inputs
+
+```html
+<!-- TextBox -->
+<ejs-textbox placeholder="أدخل الاسم" floatLabelType="Auto"
+             [(ngModel)]="name" />
+
+<!-- Required with label -->
+<div class="form-field">
+  <label for="email">البريد الإلكتروني *</label>
+  <ejs-textbox id="email" type="email" floatLabelType="Never"
+               [value]="email()" (change)="email.set($event.value)" />
+</div>
+
+<!-- Multiline -->
+<ejs-textbox [multiline]="true" [rows]="4" placeholder="الوصف" />
+
+<!-- Numeric -->
+<ejs-numerictextbox [min]="0" [max]="100" [step]="1" [value]="quantity()"
+                    (change)="quantity.set($event.value)" />
+
+<!-- Masked -->
+<ejs-maskedtextbox mask="000-000-0000" placeholder="رقم الهاتف" />
+
+<!-- Password -->
+<ejs-textbox type="password" floatLabelType="Auto" placeholder="كلمة المرور" />
+
+<!-- Slider -->
+<ejs-slider [min]="0" [max]="100" [value]="sliderValue()"
+            (change)="sliderValue.set($event.value)" />
+
+<!-- Switch -->
+<ejs-switch [checked]="isActive()" (change)="isActive.set($event.checked)" />
+
+<!-- Checkbox -->
+<ejs-checkbox label="أوافق على الشروط" [checked]="agreed()"
+              (change)="agreed.set($event.checked)" />
+
+<!-- Radio -->
+<ejs-radiobutton label="يومي" value="daily" name="frequency"
+                 [checked]="frequency() === 'daily'"
+                 (change)="frequency.set('daily')" />
+
+<!-- Rating -->
+<ejs-rating [value]="rating()" (change)="rating.set($event.value)" />
+
+<!-- OTP -->
+<ejs-otpinput [length]="6" separator="-"
+              (change)="otp.set($event.value)" />
+
+<!-- Color picker -->
+<ejs-colorpicker [value]="color()" (change)="color.set($event.value)" />
+
+<!-- File upload -->
+<ejs-uploader [multiple]="false" allowedExtensions=".pdf,.docx"
+              (success)="onFileUploaded($event)" />
+```
+
+#### Dropdowns
+
+```html
+<!-- Single select -->
+<ejs-dropdownlist [dataSource]="options" [fields]="{ text: 'label', value: 'id' }"
+                  [value]="selectedId()" placeholder="اختر..."
+                  (change)="selectedId.set($event.value)" />
+
+<!-- With search -->
+<ejs-combobox [dataSource]="options" [fields]="{ text: 'label', value: 'id' }"
+              [value]="selectedId()" placeholder="ابحث أو اختر..." />
+
+<!-- Multi-select -->
+<ejs-multiselect [dataSource]="tags" [fields]="{ text: 'name', value: 'id' }"
+                 [value]="selectedTags()" mode="Box" showSelectAll="true"
+                 (change)="selectedTags.set($event.value)" />
+
+<!-- Autocomplete -->
+<ejs-autocomplete [dataSource]="suggestions" [fields]="{ value: 'name' }"
+                  placeholder="ابحث..." (select)="onSelect($event)" />
+
+<!-- Dropdown tree -->
+<ejs-dropdowntree [fields]="treeFields" [value]="selectedNode()"
+                  (change)="selectedNode.set($event.value)" />
+```
+
+#### Date & Time
+
+```html
+<!-- Date picker -->
+<ejs-datepicker [value]="date()" format="dd/MM/yyyy"
+                (change)="date.set($event.value)" />
+
+<!-- Date range -->
+<ejs-daterangepicker [startDate]="startDate()" [endDate]="endDate()"
+                     format="dd/MM/yyyy"
+                     (change)="onDateRangeChange($event)" />
+
+<!-- DateTime -->
+<ejs-datetimepicker [value]="datetime()" format="dd/MM/yyyy HH:mm"
+                    (change)="datetime.set($event.value)" />
+
+<!-- Time only -->
+<ejs-timepicker [value]="time()" format="HH:mm"
+                (change)="time.set($event.value)" />
+```
+
+#### Data Grid
+
+```html
+<ejs-grid
+  [dataSource]="gridData()"
+  [allowSorting]="true"
+  [allowFiltering]="true"
+  [allowPaging]="true"
+  [allowResizing]="true"
+  [allowReordering]="true"
+  [pageSettings]="{ pageSize: 20, pageSizes: [10, 20, 50] }"
+  [filterSettings]="{ type: 'Menu' }"
+  [toolbar]="['Search', 'ExcelExport', 'PdfExport', 'ColumnChooser']"
+  [showColumnChooser]="true"
+  (toolbarClick)="onToolbarClick($event)"
+>
+  <e-columns>
+    <e-column field="id" headerText="الرقم" width="80" isPrimaryKey="true" />
+    <e-column field="name" headerText="الاسم" minWidth="120" />
+    <e-column field="status" headerText="الحالة" width="120">
+      <ng-template #template let-data>
+        <ejs-badge [content]="data.statusLabel"
+                   [cssClass]="data.statusClass" />
+      </ng-template>
+    </e-column>
+    <e-column field="createdAt" headerText="التاريخ" width="120"
+              type="date" format="dd/MM/yyyy" />
+    <e-column headerText="الإجراءات" width="80" [allowSorting]="false">
+      <ng-template #template let-data>
+        <button ejs-button iconCss="e-icons e-more-vertical"
+                aria-label="إجراءات" (click)="onRowActions($event, data)" />
+      </ng-template>
+    </e-column>
+  </e-columns>
+
+  <!-- Empty state template -->
+  <ng-template #emptyRecordTemplate>
+    <div class="grid-empty-state">
+      <span class="e-icons e-table-view"></span>
+      <p>لا توجد سجلات. أضف عنصراً جديداً للبدء.</p>
+      <button ejs-button cssClass="e-primary" (click)="onCreate()">إضافة</button>
+    </div>
+  </ng-template>
+</ejs-grid>
+```
+
+**Required providers for GridModule features:**
+```typescript
+// In component providers array:
+providers: [SortService, FilterService, PageService, ToolbarService,
+            ExcelExportService, PdfExportService, ColumnChooserService,
+            ResizeService, ReorderService]
+```
+
+#### Navigation
+
+```html
+<!-- Sidebar — right side, RTL -->
+<ejs-sidebar #sidebar type="Push" [width]="sidebarWidth()"
+             position="Right" [isOpen]="sidebarOpen()"
+             (change)="sidebarOpen.set($event.isOpen)">
+  <div class="sidebar-nav">
+    <!-- nav items -->
+  </div>
+</ejs-sidebar>
+
+<!-- AppBar -->
+<ejs-appbar colorMode="Primary" position="Top">
+  <!-- RTL: product name at far right (start), actions at far left (end) -->
+  <span class="app-name">خوارزمي</span>
+  <div class="e-appbar-spacer"></div>
+  <ejs-autocomplete [dataSource]="searchData" placeholder="بحث..." width="240" />
+  <div class="e-appbar-spacer"></div>
+  <button ejs-button iconCss="e-icons e-bell" aria-label="الإشعارات">
+    <ejs-badge [content]="notificationCount()" cssClass="e-danger" />
+  </button>
+  <ejs-avatar [src]="user().avatar" cssClass="e-avatar-small" />
+</ejs-appbar>
+
+<!-- Tabs -->
+<ejs-tab [selectedItem]="activeTab()" (selected)="activeTab.set($event.selectedIndex)">
+  <e-tabitems>
+    <e-tabitem>
+      <ng-template #headerText><span>الملخص</span></ng-template>
+      <ng-template #content><app-summary-tab /></ng-template>
+    </e-tabitem>
+    <e-tabitem>
+      <ng-template #headerText><span>التفاصيل</span></ng-template>
+      <ng-template #content><app-details-tab /></ng-template>
+    </e-tabitem>
+  </e-tabitems>
+</ejs-tab>
+
+<!-- Breadcrumb -->
+<ejs-breadcrumb [items]="breadcrumbItems" [maxItems]="4"
+                activeItem="current-page" />
+
+<!-- Stepper -->
+<ejs-stepper [steps]="steps" [activeStep]="currentStep()"
+             (stepChanged)="currentStep.set($event.activeStep)" />
+```
+
+#### Popups
+
+```html
+<!-- Dialog -->
+<ejs-dialog #dialog [visible]="dialogOpen()" [width]="'480px'"
+            [header]="'تأكيد الحذف'" [showCloseIcon]="true"
+            (overlayClick)="dialogOpen.set(false)"
+            (close)="dialogOpen.set(false)">
+  <ng-template #content>
+    <ejs-message severity="Warning">
+      هل أنت متأكد من حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.
+    </ejs-message>
+  </ng-template>
+  <ng-template #footerTemplate>
+    <button ejs-button cssClass="e-danger" (click)="onConfirmDelete()">حذف</button>
+    <button ejs-button (click)="dialogOpen.set(false)">إلغاء</button>
+  </ng-template>
+</ejs-dialog>
+
+<!-- Tooltip -->
+<ejs-tooltip content="نص تلميح مفصل">
+  <button ejs-button iconCss="e-icons e-info-circle" aria-label="معلومات" />
+</ejs-tooltip>
+```
+
+#### Feedback
+
+```html
+<!-- Toast (in component template, trigger via ViewChild) -->
+<ejs-toast #toast position="{ X: 'Left', Y: 'Bottom' }"
+           [newestOnTop]="true" [timeOut]="5000" />
+
+<!-- Message — persistent inline -->
+<ejs-message severity="Error">
+  فشل تحميل البيانات. <a (click)="retry()">إعادة المحاولة</a>
+</ejs-message>
+
+<!-- Skeleton — loading state for content areas -->
+<ejs-skeleton shape="Rectangle" height="200px" />
+<ejs-skeleton shape="Text" width="60%" />
+<ejs-skeleton shape="Avatar" size="40px" cssClass="e-skeleton-circle" />
+
+<!-- Progress bar -->
+<ejs-progressbar type="Linear" [value]="progress()" [trackThickness]="8"
+                 [progressThickness]="8" />
+```
+
+**Triggering Toast from TypeScript:**
+```typescript
+import { ViewChild } from '@angular/core';
+import { ToastComponent } from '@syncfusion/ej2-angular-notifications';
+
+@ViewChild('toast') private toast!: ToastComponent;
+
+showSuccess(message: string): void {
+  this.toast.show({ content: message, cssClass: 'e-toast-success' });
+}
+
+showError(message: string): void {
+  this.toast.show({ content: message, cssClass: 'e-toast-danger' });
+}
+```
+
+---
+
+### E. RTL Rules (Angular-Specific)
+
+```typescript
+// ✅ Set globally in main.ts — never in components
+enableRtl(true);
+
+// ✅ RTL prop on individual components is not needed when set globally
+// But can be set explicitly for hybrid LTR/RTL screens:
+<ejs-grid [enableRtl]="true" />
+```
+
+- `enableRtl(true)` affects all Syncfusion component instances globally.
+- Do not set `direction: rtl` on component host elements — Syncfusion handles it.
+- Do not manually flip icon positions, padding, or margin for RTL — use logical CSS properties.
+- `SfSidebar` with `enableRtl(true)` automatically positions to the right.
+- `SfBreadcrumb` separator flips automatically.
+- `SfTab` arrow navigation reverses automatically.
+
+---
+
+### F. Theme & Token Overrides
+
+```scss
+// ✅ Override Syncfusion tokens via CSS variables — always in styles.scss or a dedicated overrides file
+:root {
+  // Map your design token to Syncfusion's internal token
+  --color-sf-primary: 103, 80, 164;          // RGB values — no # prefix
+  --color-sf-primary-container: 234, 221, 255;
+  --color-sf-on-primary: 255, 255, 255;
+  --color-sf-surface: 255, 251, 254;
+  --color-sf-on-surface: 28, 27, 31;
+}
+
+// Dark mode overrides
+.e-dark-mode {
+  --color-sf-primary: 208, 188, 255;
+  --color-sf-surface: 28, 27, 31;
+  --color-sf-on-surface: 230, 225, 229;
+}
+
+// ❌ Never override internal Syncfusion class names directly
+.e-grid .e-headercell { background: purple; }  // breaks theme system
+
+// ✅ Scope component overrides to :host ::ng-deep
+:host ::ng-deep .e-grid .e-headercell {
+  background: rgba(var(--color-sf-surface-variant), 1);
+}
+```
+
+---
+
+### G. Accessibility Rules (Angular)
+
+Syncfusion Material-3 components are WCAG 2.2 compliant by default. These rules cover what you must add on top:
+
+```html
+<!-- Icon-only buttons MUST have aria-label -->
+<button ejs-button iconCss="e-icons e-delete" aria-label="حذف العنصر" />
+
+<!-- Form fields — use floatLabelType or explicit label+id pair -->
+<label for="search">بحث</label>
+<ejs-textbox id="search" aria-label="بحث في السجلات" />
+
+<!-- Live region for dynamic content updates -->
+<div aria-live="polite" aria-atomic="true" class="sr-only">
+  {{ statusMessage() }}
+</div>
+
+<!-- Skip link — add at top of every page layout -->
+<a href="#main-content" class="skip-link">تخطى إلى المحتوى الرئيسي</a>
+<main id="main-content" tabindex="-1">
+  ...
+</main>
+```
+
+**Rules:**
+- Never remove `aria-*` attributes added by Syncfusion to its components.
+- Never set `tabindex="-1"` on Syncfusion components — it breaks keyboard navigation.
+- Do not reimplement keyboard navigation — it is built into all Syncfusion components.
+- `SfGrid` column `headerText` must be descriptive — never single-letter abbreviations.
+
+---
+
+### H. Do / Don't Summary
+
+**Do:**
+- ✅ Import only the Syncfusion Angular modules used in the component's `imports[]`
+- ✅ Use `ejs-*` selectors with `[property]` binding — not HTML attributes
+- ✅ Provide required grid services (`SortService`, etc.) in component `providers`
+- ✅ Call `enableRtl(true)` + `setCulture('ar')` + `L10n.load()` in `main.ts`
+- ✅ Import `material3.css` once in `styles.scss`
+- ✅ Toggle `.e-dark-mode` on root element for dark theme
+- ✅ Override Syncfusion tokens via CSS variables in `styles.scss`
+- ✅ Scope `::ng-deep` overrides inside `:host` always
+- ✅ Always generate empty state template for `ejs-grid`
+
+**Don't:**
+- ❌ Never use `SfGrid` without providing `SortService`, `FilterService`, `PageService`
+- ❌ Never hardcode component dimensions — use tokens and fluid layout
+- ❌ Never call `enableRtl()` inside a component lifecycle hook
+- ❌ Never import Syncfusion CSS inside component SCSS — global only
+- ❌ Never use `*ngFor` to loop Syncfusion list items — use `[dataSource]` binding
+- ❌ Never re-implement what a Syncfusion component already does (validation, keyboard nav, ARIA)
+- ❌ Never override `.e-*` class names directly without `:host ::ng-deep` scope
+- ❌ Never use any non-Syncfusion component when a Syncfusion equivalent exists

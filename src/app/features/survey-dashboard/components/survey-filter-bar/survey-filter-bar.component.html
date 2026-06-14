@@ -1,0 +1,27 @@
+<!-- Search field on top, filter chips below. -->
+<div class="filters">
+  <div class="filters__search">
+    <app-icon name="search" [size]="20" />
+    <input
+      type="text"
+      class="filters__input"
+      placeholder="Search by survey name..."
+      (input)="onSearch($any($event.target).value)"
+    />
+  </div>
+
+  <div class="filters__chips" role="group" aria-label="Survey filters">
+    @for (chip of filters(); track chip.id) {
+      <button
+        type="button"
+        class="chip"
+        [class.chip--active]="activeFilter() === chip.id"
+        [attr.aria-pressed]="activeFilter() === chip.id"
+        (click)="filterSelect.emit(chip.id)"
+      >
+        <app-icon [name]="chip.icon" [size]="14" />
+        <span>{{ chip.label }}</span>
+      </button>
+    }
+  </div>
+</div>

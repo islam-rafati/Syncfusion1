@@ -1,0 +1,886 @@
+---
+alwaysApply: true
+---
+--- typography.rules.md ---
+
+# typography.rules.md
+
+### A. Purpose
+Establish a consistent, scalable type system for all Khwarizmi products. Ensures readability, hierarchy, and Arabic-first typographic behavior across enterprise interfaces.
+
+### B. Rules
+- Typography must follow a **modular scale** — no arbitrary font sizes.
+- Defined scale (in px / rem):
+  - **Display**: 57px / 3.5625rem — hero headings only
+  - **H1**: 32px / 2rem
+  - **H2**: 24px / 1.5rem
+  - **H3**: 20px / 1.25rem
+  - **H4**: 16px / 1rem (semibold)
+  - **Body Large**: 16px / 1rem (regular)
+  - **Body Medium**: 14px / 0.875rem (regular)
+  - **Body Small / Caption**: 12px / 0.75rem
+  - **Label**: 11px / 0.6875rem (uppercase, tracked)
+- Line height: 1.5× font size minimum for body text; 1.2× for headings.
+- Arabic typeface must be explicitly specified and must be an enterprise-grade Arabic font (e.g. Cairo, IBM Plex Arabic, Noto Kufi Arabic).
+- Latin typeface pairing must complement the Arabic face (e.g. Inter, IBM Plex Sans).
+- Font weight scale: 400 (regular), 500 (medium), 600 (semibold), 700 (bold) only.
+- No decorative or display fonts in data-heavy interfaces.
+- Text on colored backgrounds must use the corresponding `--color-sf-on-{role}` token.
+- Do not justify Arabic text in UI components — use `start` alignment (right for RTL).
+- Truncation with ellipsis must be applied to all single-line overflow situations.
+- Minimum body text size: 14px for desktop, 16px for mobile.
+- Line length for readable prose: 60–80 characters (max 90).
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use H1–H4 in strict hierarchy — never skip levels.
+- ✅ Apply Arabic font to all Arabic content, including labels and placeholders.
+- ✅ Use Body Medium (14px) as the default for tables, forms, and list items.
+- ✅ Use Caption (12px) for metadata, timestamps, helper text.
+- ✅ Use Label (11px uppercase) for column headers and section dividers.
+- ✅ Apply `font-feature-settings: "kern", "liga"` for Arabic shaping support.
+
+**Don't:**
+- ❌ Do not use font sizes outside the defined scale.
+- ❌ Do not center-align Arabic paragraph text.
+- ❌ Do not use italic for Arabic — it is not a valid Arabic typographic style.
+- ❌ Do not apply letter-spacing to Arabic text.
+- ❌ Do not use more than two typefaces in a single interface.
+- ❌ Do not use font weight 300 (light) in enterprise interfaces — it reduces readability.
+
+### D. MCP Usage Guidance
+- When generating text elements, always assign the correct type scale role (H1, Body Medium, Caption, etc.).
+- Detect language context: apply Arabic typeface for RTL content, Latin typeface for LTR.
+- When generating table headers, default to Label style (11px uppercase, semibold).
+- When generating form labels, use Body Small (12px, medium weight).
+- Do not infer font size from visual appearance — always reference the scale.
+
+---
+
+
+--- spacing.rules.md ---
+
+# spacing.rules.md
+
+### A. Purpose
+Enforce a strict spatial system across all Khwarizmi interfaces to ensure visual rhythm, predictability, and scalability.
+
+### B. Rules
+- All spacing values MUST be multiples of **8px**.
+- Defined spacing scale:
+  - **2px** — micro: dividers, icon padding only
+  - **4px** — extra-small: tight internal component spacing
+  - **8px** — small: default padding within compact components
+  - **12px** — medium-small: list item padding, chip padding
+  - **16px** — medium: standard component padding, card padding
+  - **24px** — large: section spacing, form group gap
+  - **32px** — extra-large: between major sections
+  - **40px** — 2xl: content block margins
+  - **48px** — 3xl: page-level section gaps
+  - **64px** — 4xl: hero/dashboard top spacing
+- Padding inside components uses internal spacing tokens (8px, 12px, 16px).
+- Margin between components uses external spacing tokens (16px, 24px, 32px).
+- Grid gutter: 16px desktop, 12px tablet, 8px mobile (fixed).
+- Icon-to-label gap: 8px minimum.
+- Form field to label gap: 4px.
+- Form field to helper text gap: 4px.
+- Between form rows: 16px.
+- Between form sections: 32px.
+- Card internal padding: 16px or 24px — never less, never arbitrary.
+- Table cell padding: 12px vertical, 16px horizontal.
+- Do not use percentage-based spacing for component internals.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Always use an 8px-based value for every spacing decision.
+- ✅ Use 16px as the default padding for cards and panels.
+- ✅ Use 24px to separate logical groups within a form or section.
+- ✅ Use 32px to separate major page sections.
+- ✅ Keep icon-label pairs 8px apart consistently.
+
+**Don't:**
+- ❌ Do not use values like 5px, 7px, 10px, 15px, 18px, 20px.
+- ❌ Do not use `margin: auto` to center content within components.
+- ❌ Do not mix padding and margin inconsistently within the same component type.
+- ❌ Do not add spacing overrides per-component without token reference.
+- ❌ Do not collapse spacing between sections to 0 — minimum section gap is 16px.
+
+### D. MCP Usage Guidance
+- When generating layouts or components, resolve all spacing from the 8px scale.
+- When spacing is not specified in a prompt, apply the default: 16px internal padding, 24px between sections.
+- Reject or flag any spacing value not on the defined scale.
+- When generating forms, auto-apply: 4px label-to-field, 16px between fields, 32px between groups.
+
+---
+
+
+--- layouts.rules.md ---
+
+# layouts.rules.md
+
+### A. Purpose
+Define the structural layout system for all Khwarizmi enterprise interfaces. Ensures consistent, accessible, and scalable screen architecture across all RealSoft products.
+
+### B. Rules
+- Every layout MUST use a 12-column grid system.
+- Column gutter is 16px on desktop, 12px on tablet, 8px on mobile.
+- All layouts MUST follow the three-zone structure: **Sidebar + Header (App Bar) + Main Content**.
+- Sidebar is always on the **right side** (RTL-first).
+- Header/App Bar is always fixed at the top.
+- Content area must be scrollable independently from the sidebar and header.
+- Breakpoints:
+  - **Mobile**: < 600px — single column, hidden sidebar (drawer)
+  - **Tablet**: 600px–1024px — 4-column grid, collapsible sidebar
+  - **Desktop**: > 1024px — 12-column grid, persistent sidebar
+- Page content must never span full 12 columns — use 10 or fewer for readability.
+- Dashboard layouts MUST place KPI summary cards at the top of the content area.
+- No floating elements that obscure primary content except modals and toasters.
+- Z-index layers: Base (0) → Content (1) → Sticky elements (10) → Sidebar (20) → Modal backdrop (30) → Modal (40) → Toaster (50).
+- Content regions must have clear visual separation using surface tokens, not borders alone.
+- Minimum touch target for interactive areas: 44×44px.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use the sidebar-header-content three-zone architecture on every screen.
+- ✅ Design RTL layouts natively — sidebar on right, content flows right to left.
+- ✅ Collapse sidebar to icon-only mode on tablet; hide entirely on mobile.
+- ✅ Use 12-column grid with consistent gutters.
+- ✅ Keep header persistent and visible at all times.
+- ✅ Leave a minimum of 8px padding on all layout edges.
+
+**Don't:**
+- ❌ Do not create LTR-mirrored layouts and reverse them for Arabic.
+- ❌ Do not use fixed pixel widths for content containers.
+- ❌ Do not create fullscreen single-column layouts for desktop.
+- ❌ Do not nest grid systems inside grid columns beyond two levels.
+- ❌ Do not stack the sidebar below the main content on any viewport.
+- ❌ Do not create one-off layouts not based on the 12-column grid.
+
+### D. MCP Usage Guidance
+- When generating UI in Figma MCP or Cursor, always apply the three-zone layout template first.
+- Auto-detect RTL context and apply right-side sidebar placement.
+- When generating a dashboard screen, place KPI cards in the first content row, charts in the second, and tables below.
+- When generating mobile views, always switch to a drawer-based sidebar and single-column grid.
+- Do not deviate from layout zones without an explicit override instruction from the designer.
+
+---
+
+
+--- components.rules.md ---
+
+# components.rules.md
+
+### A. Purpose
+Enforce consistent component usage across all Khwarizmi interfaces using the **Syncfusion UI Kit — Material-3 Theme** as the sole component library. No custom or third-party components are permitted.
+
+### B. Rules
+
+**Source of Truth:**
+- ALL UI components MUST come from the **Syncfusion UI Kit — Material-3 Theme** Figma library.
+- Figma Community file: `https://www.figma.com/community/file/1454123774600129202/syncfusion-ui-kit-material-3-theme`
+- In code, use the corresponding **Syncfusion Angular** component that maps to the Figma design.
+- No custom-built components, no shadcn, no MUI, no Ant Design — Syncfusion only.
+- All Syncfusion components must use the **Material-3 theme CSS** (`material3.css` or the customized output from Theme Studio).
+
+**Component-to-Syncfusion Mapping:**
+
+Buttons:
+- Button → `SfButton` (variant: Contained / Outlined / Text)
+- Icon Button → `SfButton` with icon-only class
+- Button Group → `SfButtonGroup`
+- Dropdown Button → `SfDropDownButton`
+- Split Button → `SfSplitButton`
+- FAB → `SfFab`
+- Speed Dial → `SfSpeedDial`
+- Chips → `SfChip` / `SfChipList`
+- Spinner → `SfSpinner`
+
+Inputs:
+- TextBox → `SfTextBox`
+- Text Area → `SfTextBox` (multiline)
+- Input Mask → `SfMaskedTextBox`
+- Numeric Textbox → `SfNumericTextBox`
+- Password Textbox → `SfTextBox` (type: password)
+- Radio Button → `SfRadioButton`
+- CheckBox → `SfCheckBox`
+- Color Picker → `SfColorPicker`
+- File Upload → `SfUploader`
+- Range Slider → `SfSlider`
+- Toggle Switch → `SfSwitch`
+- Signature Pad → `SfSignature`
+- Rating → `SfRating`
+- OTP → `SfOtpInput`
+
+Navigation:
+- Accordion → `SfAccordion`
+- App Bar → `SfAppBar`
+- Breadcrumb → `SfBreadcrumb`
+- Carousel → `SfCarousel`
+- Context Menu → `SfContextMenu`
+- Menu Bar → `SfMenu`
+- Side Bar → `SfSidebar`
+- Tabs → `SfTab`
+- Toolbar → `SfToolbar`
+- Tree View → `SfTreeView`
+- Stepper → `SfStepper`
+
+Notifications:
+- Message → `SfMessage`
+- Badge → `SfBadge`
+- Toaster → `SfToast`
+- Progress Bar → `SfProgressBar`
+- Skeleton → `SfSkeleton`
+
+Dropdowns:
+- AutoComplete → `SfAutoComplete`
+- Combo Box → `SfComboBox`
+- Dropdown List → `SfDropDownList`
+- Dropdown Tree → `SfDropDownTree`
+- Multiselect Dropdown → `SfMultiSelect`
+- Mention → `SfMention`
+- List Box → `SfListBox`
+- Multicolumn Combobox → `SfMultiColumnComboBox`
+
+Layout:
+- Avatar → `SfAvatar`
+- Card → `SfCard`
+- Dialog Box → `SfDialog`
+- List View → `SfListView`
+- Predefined Dialog → `SfDialog` (Alert / Confirm / Prompt variants)
+- Splitter → `SfSplitter`
+- Timeline → `SfTimeline`
+- Tooltip → `SfTooltip`
+- Dashboard Layout → `SfDashboardLayout`
+
+Calendar:
+- Scheduler → `SfSchedule`
+- Calendar → `SfCalendar`
+- Date Picker → `SfDatePicker`
+- DateRange Picker → `SfDateRangePicker`
+- DateTime Picker → `SfDateTimePicker`
+- Time Picker → `SfTimePicker`
+- Gantt → `SfGantt`
+
+File Viewers / Editors:
+- Inplace Editor → `SfInPlaceEditor`
+- PDF Viewer → `SfPdfViewer`
+- Rich Text Editor → `SfRichTextEditor`
+- Document Editor → `SfDocumentEditor`
+- Image Editor → `SfImageEditor`
+
+Grids:
+- Data Grid → `SfGrid`
+- Pager → `SfPager`
+- Pivot Grid → `SfPivotView`
+- Tree Grid → `SfTreeGrid`
+- SpreadSheet → `SfSpreadsheet`
+
+Forms:
+- Query Builder → `SfQueryBuilder`
+- Form Validation → `FormValidator`
+
+Interactive Chat:
+- AI AssistView → `SfAIAssistView`
+- Chat → `SfChatUI`
+
+Data Visualizations:
+- Charts → `SfChart` / `SfAccumulationChart`
+- Barcode → `SfBarcodeGenerator`
+- Kanban → `SfKanban`
+
+**Theme Application:**
+- All Syncfusion components use the Material-3 theme: import `@syncfusion/ej2/material3.css`
+- Dark mode: add `.e-dark-mode` class to the root element — Syncfusion Material-3 responds automatically.
+- Custom token overrides go through Theme Studio or CSS variable overrides using the `--color-sf-*` token system.
+
+**Component States:**
+- Every component must render all Syncfusion built-in states: default, hover, focused, active, disabled, loading.
+- Do not override Syncfusion state styles — use token overrides only.
+- Disabled state is handled by Syncfusion via the `disabled` prop — do not manually grey out.
+
+**Accessibility:**
+- All Syncfusion Material-3 components are WCAG 2.2 / Section 508 / WAI-ARIA compliant by default.
+- Do not remove ARIA attributes added by Syncfusion.
+- Keyboard navigation is built into all Syncfusion components — do not reimplement it.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use Syncfusion Material-3 Figma Kit components in all design files.
+- ✅ Map every Figma component 1:1 to its Syncfusion React/JS code counterpart.
+- ✅ Apply Material-3 theme CSS globally — never per-component.
+- ✅ Use Theme Studio to generate custom theme CSS from modified tokens.
+- ✅ Use `.e-dark-mode` class for dark theme switching.
+- ✅ Leverage Syncfusion's built-in RTL support via `enableRtl: true` globally.
+
+**Don't:**
+- ❌ Do not build custom components when a Syncfusion equivalent exists.
+- ❌ Do not use any other UI library (MUI, Ant, Chakra, shadcn, Radix).
+- ❌ Do not override Syncfusion internal class names directly.
+- ❌ Do not import Fluent, Bootstrap, or Tailwind theme — Material-3 only.
+- ❌ Do not disable Syncfusion's built-in accessibility attributes.
+- ❌ Do not use Syncfusion component markup outside its documented API.
+
+### D. MCP Usage Guidance
+- When generating any UI element, first identify its Syncfusion Material-3 component equivalent.
+- Reference the Syncfusion UI Kit Figma file for design specs: `https://www.figma.com/community/file/1454123774600129202`
+- When generating code, always use the Syncfusion component import path: `@syncfusion/ej2-react-*` (React) or `@syncfusion/ej2-*` (JS).
+- Enable RTL globally at app root: `L10n.load()` + `setCulture('ar')` + `enableRtl(true)` for Arabic interfaces.
+- Apply Material-3 CSS at root level — never inline per component.
+- When a Figma frame references a Syncfusion component, extract its variant/state from the Figma layer name and map it to the corresponding Syncfusion prop.
+
+
+
+--- navigation.rules.md ---
+
+# navigation.rules.md
+
+### A. Purpose
+Define consistent navigation architecture using Syncfusion UI Kit — Material-3 Theme components exclusively.
+
+### B. Rules
+
+**Architecture:**
+- Primary navigation: `SfSidebar` (right side, RTL-first)
+- Secondary in-section navigation: `SfTab`
+- Breadcrumb: `SfBreadcrumb` — mandatory on all pages > one level deep
+- App Bar: `SfAppBar` — fixed top, always visible
+- Context actions: `SfToolbar` above content area — not in App Bar
+- Sequential flows: `SfStepper`
+- Hierarchical data navigation: `SfTreeView`
+
+**SfSidebar Rules:**
+- Three states: Expanded (with labels) / Collapsed (icons only) / Hidden (mobile drawer)
+- Expanded width: 240px. Collapsed width: 64px.
+- Use `SfSidebar` with `type='Push'` (desktop) / `type='Over'` (mobile)
+- `enableRtl={true}` positions sidebar on right automatically
+- Max two navigation levels. Third level uses sub-page or `SfTab`.
+- Group items under section headers: 8px between items, 16px between groups
+- Active item: `--color-sf-primary-container` bg + `--color-sf-on-primary-container` text (Material-3 handles)
+- Badge counts on sidebar items: use `SfBadge`
+- Icons mandatory for all items — `SfSidebar` supports icon + label per item
+
+**SfAppBar Rules:**
+- Height: 56px fixed — use `SfAppBar` component
+- Always visible — `position='Top'` + sticky
+- RTL: logo/product name at far right, user profile at far left (automatic with `enableRtl`)
+- Global search: `SfAutoComplete` in AppBar center
+- Notifications: icon button + `SfBadge` for unread count
+- User profile: `SfAvatar` + `SfDropDownButton`
+
+**SfTab Rules:**
+- Use for parallel content sections — not sequential steps (use `SfStepper` for steps)
+- Max 6 tabs — overflow handled by `SfTab` scroll mode
+- Active tab: `--color-sf-primary` underline, 2px (Material-3 theme handles)
+- Tab width: auto content-based, min 80px, max 160px
+- Keyboard: Arrow Left/Right navigation built into `SfTab` with RTL awareness
+
+**SfBreadcrumb Rules:**
+- Place below `SfAppBar`, above page title
+- Last item = current page (not a link) — use `disabled` on last item
+- Max 4 levels — `SfBreadcrumb` handles overflow with `maxItems` prop
+- RTL separator handled automatically with `enableRtl`
+
+**Other Component Rules:**
+- `SfAccordion` → expandable content groups in side panels, settings — NOT primary navigation
+- `SfContextMenu` → row-level / element-level quick actions only
+- `SfMenu` → application-level menu systems (document editors, complex tools)
+- `SfTreeView` → hierarchical data navigation (file systems, org charts, categories)
+- `SfStepper` → sequential multi-step workflows only — never for parallel content
+- `SfCarousel` → content presentation only — never navigation
+
+**RTL:**
+- All Syncfusion navigation components respect `enableRtl(true)` globally.
+- Do not manually mirror navigation layouts.
+
+**Accessibility:**
+- `SfSidebar` includes `role="navigation"` by default.
+- `SfBreadcrumb` uses `aria-label="breadcrumb"` and `aria-current="page"` automatically.
+- `SfTab` keyboard navigation (Arrow keys, Tab, Enter) is built in.
+- Skip navigation link: add manually at page top for keyboard users.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfSidebar` as primary navigation on all enterprise screens.
+- ✅ Use `SfTab` for switching between parallel views.
+- ✅ Show `SfBreadcrumb` on all pages below root level.
+- ✅ Use `SfStepper` for sequential workflows.
+- ✅ Collapse `SfSidebar` to icon-only on tablet via `isOpen` prop control.
+
+**Don't:**
+- ❌ Do not use > 2 navigation levels in `SfSidebar`.
+- ❌ Do not use `SfAccordion` as primary navigation.
+- ❌ Do not mix `SfTab` and `SfStepper` for the same pattern.
+- ❌ Do not place action buttons in `SfAppBar` — use `SfToolbar`.
+- ❌ Do not use `SfCarousel` for section navigation.
+- ❌ Do not manually style navigation components — use Material-3 theme tokens.
+
+### D. MCP Usage Guidance
+- When generating a new application screen, auto-generate: `SfSidebar` (right, RTL), `SfAppBar` (top, fixed), content area.
+- When generating multi-section content, auto-add `SfTab` at top of content zone.
+- When generating hierarchical navigation, use `SfTreeView` inside `SfSidebar`.
+- When generating multi-step flows, auto-select `SfStepper`.
+- When generating AppBar: product name (right), `SfAutoComplete` search (center), notification + `SfAvatar` (left) for RTL.
+- All Syncfusion navigation components: pass `enableRtl={true}` prop or rely on global `enableRtl(true)` bootstrap.
+
+
+
+--- forms.rules.md ---
+
+# forms.rules.md
+
+### A. Purpose
+Standardize all form design, behavior, and validation using Syncfusion UI Kit — Material-3 Theme components exclusively.
+
+### B. Rules
+
+**Structure:**
+- All forms use Syncfusion's `FormValidator` for validation logic.
+- Simple forms (≤ 6 fields): single column layout.
+- Medium forms (7–15 fields): two-column layout using 6/6 grid split.
+- Complex forms (> 15 fields or multi-domain): use `SfStepper` for multi-step progression.
+- Group related fields under labeled sections with a divider and H4 heading.
+- Section spacing: 32px between groups. Field spacing: 16px between fields.
+
+**Syncfusion Component Per Field Type:**
+- Short text → `SfTextBox`
+- Long text → `SfTextBox` (multiline prop)
+- Number → `SfNumericTextBox`
+- Password → `SfTextBox` (type: password)
+- Formatted input (phone, ID, IBAN) → `SfMaskedTextBox`
+- Single select ≤ 5 options → `SfRadioButton`
+- Single select long list → `SfDropDownList`
+- Single select with search → `SfComboBox`
+- Multi-select → `SfMultiSelect`
+- Multi-select inline compact → `SfChip` / `SfChipList`
+- Boolean setting → `SfSwitch`
+- Agree/acknowledge → `SfCheckBox`
+- Date → `SfDatePicker`
+- Date range → `SfDateRangePicker`
+- Date + time → `SfDateTimePicker`
+- Time only → `SfTimePicker`
+- File → `SfUploader`
+- Color → `SfColorPicker`
+- OTP → `SfOtpInput`
+- Signature → `SfSignature`
+- Rating → `SfRating`
+- Range value → `SfSlider`
+
+**Label and Helper Rules:**
+- Every field MUST have a visible label — no placeholder-only fields.
+- Labels appear ABOVE the field (RTL-safe).
+- Required fields marked with `*` after label text.
+- Helper text below field: Caption style (12px, `--color-sf-on-surface-variant`).
+- Error text replaces helper text using `--color-sf-error`.
+- Character count shown below `SfTextBox` multiline when limit exists.
+
+**Validation:**
+- Use `FormValidator` — validate on blur and on submit.
+- Errors appear inline below the field via Syncfusion's built-in error display.
+- Error message format: "What is wrong. How to fix it."
+- Multi-field errors also shown in `SfMessage` (error variant) at top of form on submit.
+- Disable submit button during submission — show `SfSpinner` inside `SfButton`.
+- On success: show `SfToast` (success variant).
+
+**Progressive Disclosure:**
+- Advanced fields hidden behind `SfAccordion` toggle.
+- Conditional fields use show/hide with smooth transition.
+- Multi-stage flows always use `SfStepper` — never multiple pages.
+
+**RTL:**
+- All Syncfusion form components respect `enableRtl(true)` automatically.
+- Labels, helper text, and error messages align right in RTL.
+- Do not manually set `direction: rtl` on individual components.
+
+**Accessibility:**
+- Syncfusion components include ARIA by default — do not remove.
+- `SfTextBox`, `SfDropDownList`, etc. all support `aria-label` and `aria-describedby` props.
+- Focus order follows RTL reading direction automatically when `enableRtl` is active.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfStepper` for forms with > 15 fields or distinct logical stages.
+- ✅ Use `FormValidator` for all validation — never manual validation logic.
+- ✅ Use the correct Syncfusion input component per data type.
+- ✅ Group related fields with section headers and 32px spacing.
+- ✅ Disable submit during processing with `SfSpinner` inside `SfButton`.
+
+**Don't:**
+- ❌ Do not use `<input>` or `<select>` HTML directly — always use Syncfusion components.
+- ❌ Do not use placeholder text as a substitute for labels.
+- ❌ Do not validate on every keystroke.
+- ❌ Do not use `SfTextBox` for date input — always `SfDatePicker`.
+- ❌ Do not mix `SfCheckBox` and `SfSwitch` for the same type of boolean decision.
+- ❌ Do not build custom dropdowns — use `SfDropDownList` or `SfComboBox`.
+
+### D. MCP Usage Guidance
+- When generating a form, identify field count/type → select single/two-column/stepper layout.
+- Auto-map each field to its Syncfusion Material-3 component.
+- Auto-apply: label above field, 16px between fields, 32px between sections, `*` for required.
+- Always generate validation state variants: default, error, success, disabled.
+- For Stepper forms, generate each step as a discrete section with Back/Next/Submit `SfButton` controls.
+- Reference Syncfusion Figma Kit layer names when mapping from Figma frames to code components.
+
+
+
+--- tables.rules.md ---
+
+# tables.rules.md
+
+### A. Purpose
+Define all rules for data table design and behavior using Syncfusion Material-3 grid components exclusively.
+
+### B. Rules
+
+**Component Selection:**
+- All tabular data → `SfGrid` (Syncfusion Data Grid)
+- Hierarchical data → `SfTreeGrid`
+- Cross-tabular analytics → `SfPivotView`
+- Editable spreadsheet-style → `SfSpreadsheet`
+- Pagination control → `SfPager`
+
+**Structure:**
+- Column headers: Label style (11px, uppercase, semibold, `--color-sf-on-surface-variant`)
+- Row height: 40px compact / 48px default / 56px relaxed
+- Cell padding: 12px vertical, 16px horizontal
+- Alternating rows: `--color-sf-on-surface-opacity4` for alternate row (use `SfGrid` `enableAltRow` prop)
+- Selected row: `--color-sf-primary-opacity-8` (Syncfusion applies via Material-3 theme)
+- Hover row: `--color-sf-on-surface-opacity5` (handled by Material-3 theme)
+
+**Required SfGrid Features (always enable):**
+- Sorting: `allowSorting={true}`
+- Filtering: `allowFiltering={true}` with FilterBar or Menu filter
+- Pagination: `allowPaging={true}` with `SfPager`
+- Column resizing: `allowResizing={true}`
+- Column reorder: `allowReordering={true}`
+- RTL: handled globally via `enableRtl(true)`
+
+**Conditional Features (enable when applicable):**
+- Selection with bulk actions: `selectionSettings={{ type: 'Multiple', checkboxMode: 'ResetOnRowClick' }}`
+- Export (CSV / Excel / PDF): `SfGrid` toolbar with `['ExcelExport', 'CsvExport', 'PdfExport']`
+- Column chooser: `showColumnChooser={true}` when table > 8 columns
+- Frozen columns: `freeze` prop on identifier/name column when > 8 columns
+- Virtual scrolling: `enableVirtualization={true}` for datasets > 500 rows
+- Inline editing: `editSettings={{ allowEditing: true, mode: 'Normal' }}` using `SfInPlaceEditor`
+- Search: `toolbar={['Search']}` above the grid
+
+**Content Rules:**
+- Empty cells: display `—` (en dash) — set via `defaultValue` or template
+- Numbers: right-aligned in LTR, left-aligned (reading-end) in RTL
+- Text: right-aligned in RTL (automatic with `enableRtl`)
+- Dates: `DD/MM/YYYY` format for Arabic contexts — set via `SfGrid` column `format` prop
+- Status columns: use `SfBadge` or `SfChip` via column template — never raw text
+- Action columns: always last column (leftmost in RTL) — use `SfButton` icon-only or `SfContextMenu`
+- Max visible columns without column chooser: 10
+
+**Accessibility:**
+- `SfGrid` includes `role="grid"` and full ARIA support by default — do not remove.
+- Keyboard: Tab between cells, Arrow keys within grid, Enter to activate — built into `SfGrid`.
+- Sort announcement via `aria-sort` is handled automatically by Syncfusion.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfGrid` for all structured data — never custom `<table>` HTML.
+- ✅ Freeze the identifier column when > 8 columns.
+- ✅ Show row count and `SfPager` at bottom.
+- ✅ Use `SfBadge` or `SfChip` in status columns.
+- ✅ Enable column chooser for complex tables.
+- ✅ Use `SfGrid` export toolbar for report contexts.
+
+**Don't:**
+- ❌ Do not build custom table markup.
+- ❌ Do not display more than 10 unsorted columns without column chooser.
+- ❌ Do not use plain text in status columns.
+- ❌ Do not load all records without pagination or virtual scrolling.
+- ❌ Do not place full action button sets in every row — use `SfContextMenu` instead.
+- ❌ Do not override Syncfusion grid CSS classes directly.
+
+### D. MCP Usage Guidance
+- When generating a data table, default to `SfGrid` with sorting, filtering, and pagination enabled.
+- Auto-apply: Label headers, 48px row height, 12px/16px cell padding, RTL alignment via `enableRtl`.
+- When generating status columns, auto-generate `SfBadge` or `SfChip` template variants per status value.
+- For datasets > 500 rows, enable `enableVirtualization`.
+- For report contexts, add export toolbar: `['Search', 'ExcelExport', 'PdfExport', 'CsvExport']`.
+- Map Figma frame column specs to `SfGrid` column definitions: field, headerText, width, textAlign, template.
+- Always generate an empty state template for the grid using `SfSkeleton` during load.
+
+
+
+--- feedback.rules.md ---
+
+# feedback.rules.md
+
+### A. Purpose
+Standardize all system feedback patterns using Syncfusion UI Kit — Material-3 Theme components exclusively.
+
+### B. Rules
+
+**Component → Use Case Mapping:**
+- `SfToast` → transient, non-blocking post-action feedback. Auto-dismiss 4–6 seconds. Position: bottom-left (RTL default — `position: { X: 'Left', Y: 'Bottom' }`)
+- `SfMessage` → persistent inline contextual alerts within page content. Do not auto-dismiss.
+- `SfBadge` → count and status indicators on navigation items and avatars only.
+- `SfProgressBar` → determinate or indeterminate long-running operations.
+- `SfSkeleton` → ALL loading states for content areas. Never show empty containers.
+- `SfSpinner` → small, localized loading: button loading state, inline action only.
+- `SfDialog` (Confirm variant / Predefined) → destructive action confirmation (delete, discard, logout).
+
+**Semantic Role Mapping:**
+- Success → `SfToast`/`SfMessage` with `cssClass='e-success'` + `--color-sf-success-container`
+- Warning → `cssClass='e-warning'` + `--color-sf-warning-container`
+- Error/Danger → `cssClass='e-error'` + `--color-sf-error-container`
+- Info → `cssClass='e-info'` + `--color-sf-info-container`
+
+**Validation Feedback:**
+- Inline validation below field via `FormValidator` — Body Small (12px), error color token
+- Validate on blur and on form submit — not on every keystroke
+- Error messages: describe what is wrong AND how to fix it. Never "Invalid input."
+- Required field marker: `*` after label text
+- Form-level errors on submit: `SfMessage` (error variant) at top of form
+
+**Empty States:**
+- Every empty state: icon + title + description + primary `SfButton` action
+- Constructive message — explain why empty and what user can do
+- Never display raw "No data" text
+- Use `SfSkeleton` during loading before the empty state is confirmed
+
+**Error States:**
+- Network/API errors: `SfMessage` (error) with retry `SfButton`
+- 404: custom page with `SfButton` back to safe location
+- Table/grid errors: inline `SfMessage` above `SfGrid` or row-level template
+- Never display raw error codes or stack traces
+
+**Loading States:**
+- Content areas: `SfSkeleton` — always
+- Button actions: `SfSpinner` inside `SfButton` + disable button
+- Page-level bulk operations: `SfProgressBar` with percentage or step label
+- Real-time status: `SfBadge` updates or `SfToast` — never rely on page refresh
+
+**SfToast Stacking:**
+- Maximum 3 simultaneous toasts — queue overflow beyond that
+- Use `newestOnTop: true` for stacking order
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfToast` for all post-action feedback (save, create, delete confirmed).
+- ✅ Use `SfSkeleton` during ALL content loading states.
+- ✅ Provide actionable error messages via `FormValidator` and `SfMessage`.
+- ✅ Use `SfDialog` Confirm variant before any irreversible action.
+- ✅ Apply `cssClass` semantic variants (`e-success`, `e-error`, `e-warning`, `e-info`).
+
+**Don't:**
+- ❌ Do not use browser `alert()` or `confirm()` dialogs.
+- ❌ Do not show empty containers without `SfSkeleton` or empty state.
+- ❌ Do not stack more than 3 `SfToast` simultaneously.
+- ❌ Do not use `e-warning` for errors or `e-info` for success.
+- ❌ Do not validate on every keystroke — blur/submit only.
+- ❌ Do not display technical error messages or stack traces to users.
+- ❌ Do not use `SfSpinner` for full content area loading — use `SfSkeleton`.
+
+### D. MCP Usage Guidance
+- When generating forms, always include `FormValidator` with error state variants.
+- When generating loading states, auto-insert `SfSkeleton` for all content containers.
+- When generating action buttons (delete, submit), auto-pair with `SfDialog` Confirm variant.
+- Map feedback intent to Syncfusion component + cssClass: saved → `SfToast e-success`, failed → `SfMessage e-error`, processing → `SfProgressBar`.
+- Always generate empty state treatment alongside any `SfGrid`, `SfListView`, or data container.
+- Reference Syncfusion Material-3 toast/message specs from Figma Kit for sizing and spacing.
+
+
+
+--- patterns.rules.md ---
+
+# patterns.rules.md
+
+### A. Purpose
+Define reusable UI patterns for common enterprise workflows in Khwarizmi, implemented exclusively with Syncfusion UI Kit — Material-3 Theme components.
+
+### B. Rules
+
+**Principle:**
+- Check for an existing Khwarizmi pattern before building any new UI flow.
+- All patterns are implemented using Syncfusion Material-3 components only.
+- New patterns require design system team approval and documentation.
+
+---
+
+**1. Master-Detail Pattern**
+- List: `SfGrid` or `SfListView`
+- Detail: `SfSplitter` (right panel = list, left panel = detail in RTL)
+- Detail slides in via `SfSplitter` resize — never replaces the list
+- Detail panel uses `SfCard` layout internally
+
+**2. Dashboard Pattern**
+- Row 1: KPI `SfCard` components (max 4–6, using `SfDashboardLayout`)
+- Row 2: `SfChart` / `SfAccumulationChart`
+- Row 3: `SfGrid` or secondary visualizations
+- Row 4+: supplementary content, `SfTimeline`, activity feeds
+- Top controls: date range `SfDateRangePicker`, refresh `SfButton`, export `SfButton`
+- Loading: `SfSkeleton` for all cards and charts
+- Container: `SfDashboardLayout` for drag-resize panels
+
+**3. CRUD Pattern**
+- Read: `SfGrid` with `SfBadge` status column
+- Create: `SfDialog` (simple, ≤ 10 fields) or new page (complex)
+- Update: `SfInPlaceEditor` (single field) or `SfDialog` / page (multi-field)
+- Delete: always `SfDialog` Confirm variant first
+- Post-action: `SfToast` with semantic cssClass for all CRUD operations
+
+**4. Search and Filter Pattern**
+- Search: `SfAutoComplete` or `SfTextBox` with search icon above content
+- Filters: `SfDropDownList`, `SfMultiSelect`, or `SfChip` inline above content
+- Active filters: dismissible `SfChip` items below filter bar
+- Filter count: `SfBadge` on filter toggle `SfButton`
+- Clear all: always provide a clear `SfButton`
+
+**5. Wizard / Multi-Step Pattern**
+- Component: `SfStepper`
+- Each step validates before advancing (use `FormValidator`)
+- Back `SfButton` always enabled except first step
+- Summary review step before final submit
+- `SfStepper` progress visible at all times
+- Navigation: Back / Next / Submit using `SfButton` variants
+
+**6. Report Viewer Pattern**
+- Structure: Executive Summary → KPIs (`SfCard`) → `SfChart` trends → `SfGrid` breakdowns → Export
+- Filter panel: `SfSplitter` collapsible side panel or `SfToolbar` top bar
+- Export: `SfGrid` export toolbar + `SfButton` for PDF via `SfPdfViewer`
+- Print: clean layout without `SfSidebar` and `SfAppBar` chrome
+
+**7. Empty State Pattern**
+- Icon (from Syncfusion icon set or custom SVG)
+- Title: H3 style
+- Description: Body Medium
+- Primary action: `SfButton` (Contained variant)
+
+**8. Loading State Pattern**
+- Content areas: `SfSkeleton` (always)
+- Buttons/inline: `SfSpinner` inside `SfButton`
+- Page-level operations: `SfProgressBar` with status label
+
+**9. Error State Pattern**
+- Field errors: `FormValidator` inline below field
+- Form-level: `SfMessage` (e-error) at top of form
+- Page-level: full-area `SfMessage` with retry `SfButton`
+- Network: `SfToast` (transient) or `SfMessage` (persistent)
+
+**10. Confirmation Pattern**
+- Destructive (delete/discard): `SfDialog` Confirm variant with danger-style `SfButton`
+- Non-destructive (publish/submit): `SfToast` success post-action (no pre-confirmation)
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Apply Dashboard Pattern with `SfDashboardLayout` to all overview/home screens.
+- ✅ Apply CRUD Pattern to all entity management screens.
+- ✅ Use `SfStepper` for all onboarding and multi-stage configuration.
+- ✅ Show active filters as dismissible `SfChip` items.
+- ✅ Always use `SfDialog` Confirm before destructive actions.
+- ✅ Use `SfSplitter` for Master-Detail layouts.
+
+**Don't:**
+- ❌ Do not invent new patterns when an existing one applies.
+- ❌ Do not navigate away from list in Master-Detail — use `SfSplitter` panel.
+- ❌ Do not skip the summary/review step in `SfStepper` wizards.
+- ❌ Do not auto-delete without `SfDialog` confirmation.
+- ❌ Do not use raw `<div>` loading placeholders — use `SfSkeleton`.
+- ❌ Do not use any non-Syncfusion component in pattern implementations.
+
+### D. MCP Usage Guidance
+- When generating a screen, identify its pattern type and apply the Syncfusion component stack automatically.
+- For Dashboard screens: `SfDashboardLayout` + `SfCard` KPIs + `SfChart` + `SfGrid`.
+- For CRUD screens: `SfGrid` + `SfDialog` + `SfToast` + `FormValidator`.
+- For Wizard screens: `SfStepper` + `FormValidator` per step + `SfButton` nav controls.
+- For Search/Filter: `SfAutoComplete` + `SfMultiSelect` + dismissible `SfChip` active filters.
+- When request doesn't match any pattern, flag for design team review — do not improvise.
+
+
+
+--- khwarizmi-mcp-index.md ---
+
+# khwarizmi-mcp-index.md
+
+### A. Purpose
+Master index for all Khwarizmi MCP Rules Files. Defines load order, dependencies, and Syncfusion component library reference for AI tools.
+
+### B. Rule Files and Load Order
+
+| Priority | File | Domain | Mode |
+|---|---|---|---|
+| 1 | `khwarizmi-design-system.rules.md` | Global + Syncfusion foundation | Always Apply |
+| 2 | `vision.rules.md` | Philosophy + AI principles | Always Apply |
+| 3 | `tokens.rules.md` | Design tokens (material3) | Always Apply |
+| 4 | `colors.rules.md` | Semantic color system | Apply Intelligently |
+| 5 | `typography.rules.md` | Type scale + Arabic fonts | Apply Intelligently |
+| 6 | `spacing.rules.md` | 8px spatial system | Apply Intelligently |
+| 7 | `layouts.rules.md` | 12-column RTL grid | Apply to Specific Files |
+| 8 | `components.rules.md` | Syncfusion component mapping | Apply Intelligently |
+| 9 | `navigation.rules.md` | SfSidebar, SfAppBar, SfTab | Apply to Specific Files |
+| 10 | `forms.rules.md` | FormValidator + Sf inputs | Apply to Specific Files |
+| 11 | `tables.rules.md` | SfGrid + SfPivotView | Apply to Specific Files |
+| 12 | `feedback.rules.md` | SfToast, SfMessage, SfSkeleton | Apply Intelligently |
+| 13 | `patterns.rules.md` | Dashboard, CRUD, Wizard, etc. | Apply Intelligently |
+
+### C. Syncfusion Reference Links
+
+| Resource | URL |
+|---|---|
+| Figma UI Kit — Material-3 | https://www.figma.com/community/file/1454123774600129202/syncfusion-ui-kit-material-3-theme |
+| Syncfusion React Docs | https://ej2.syncfusion.com/react/documentation |
+| Theme Studio | https://ej2.syncfusion.com/themestudio |
+| Design Tokens Figma Plugin | https://www.figma.com/community/plugin/1239169936033345966 |
+| Syncfusion Figma Profile | https://www.figma.com/@syncfusion |
+
+### D. New Project Bootstrap Checklist
+
+Every new Khwarizmi project must run these steps before any UI generation:
+
+```bash
+# 1. Install Syncfusion packages
+npm install @syncfusion/ej2-react-grids @syncfusion/ej2-react-inputs \
+  @syncfusion/ej2-react-navigations @syncfusion/ej2-react-notifications \
+  @syncfusion/ej2-react-buttons @syncfusion/ej2-react-dropdowns \
+  @syncfusion/ej2-react-charts @syncfusion/ej2-react-calendars \
+  @syncfusion/ej2-react-layouts @syncfusion/ej2-react-kanban \
+  @syncfusion/ej2-react-schedule
+
+# 2. Register Syncfusion license
+SyncfusionLicense.registerLicense('YOUR_LICENSE_KEY');
+```
+
+```tsx
+// 3. App root setup — RTL + Arabic locale
+import { enableRtl, L10n, setCulture } from '@syncfusion/ej2-base';
+import arLocale from './locales/ar.json';
+
+enableRtl(true);
+setCulture('ar');
+L10n.load({ ar: arLocale });
+```
+
+```css
+/* 4. Global CSS — Material-3 theme */
+@import '@syncfusion/ej2/material3.css';
+/* Dark mode: add .e-dark-mode to <html> or <body> */
+```
+
+```tsx
+// 5. Root element
+<html dir="rtl" lang="ar">
+  <body className="e-khwarizmi"> {/* or e-dark-mode for dark */}
+```
+
+### E. Rules
+- Load files 1–3 as Always Apply in every session.
+- Load domain rules based on the UI element being generated.
+- Higher priority files win all conflicts.
+- Never generate UI without loading the global system and token rules at minimum.
+- Do not skip vision.rules.md — it governs all AI behavior.
+- All component generation must reference `components.rules.md` for the Syncfusion mapping table.
+
+

@@ -1,0 +1,68 @@
+<!--
+  Reusable inner content for a row.
+  Icon comes first in the DOM, so under dir="rtl" it naturally sits
+  on the RIGHT (the leading side) before the label. No left/right used.
+-->
+<ng-template #content>
+  <svg
+    class="item__icon"
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path [attr.d]="iconPath()" />
+  </svg>
+
+  <!-- Hide text when collapsed so only icons remain. -->
+  @if (!collapsed()) {
+    <span class="item__label">{{ label() }}</span>
+
+    <!-- Optional badge sits at the inline-end (pushed by margin-inline-start:auto). -->
+    @if (badge() != null) {
+      <span class="item__badge">{{ badge() }}</span>
+    }
+  }
+</ng-template>
+
+<!-- Disabled: visible but non-interactive and announced to screen readers. -->
+@if (disabled()) {
+  <span class="item item--disabled" aria-disabled="true">
+    <ng-container [ngTemplateOutlet]="content" />
+  </span>
+} @else if (route()) {
+  <!--
+    Internal navigation. routerLinkActive adds the active class AND we
+    read its state (#rla) to set aria-current="page" for accessibility.
+  -->
+  <a
+    class="item"
+    [routerLink]="route()"
+    routerLinkActive="item--active"
+    #rla="routerLinkActive"
+    [attr.aria-current]="rla.isActive ? 'page' : null"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </a>
+} @else if (href()) {
+  <!-- External link. Active state is driven by the `active` input. -->
+  <a
+    class="item"
+    [href]="href()"
+    [class.item--active]="active()"
+    [attr.aria-current]="active() ? 'page' : null"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </a>
+} @else {
+  <!-- Action row (no navigation), e.g. opens a menu or runs a command. -->
+  <button
+    type="button"
+    class="item"
+    [class.item--active]="active()"
+    [attr.aria-current]="active() ? 'true' : null"
+  >
+    <ng-container [ngTemplateOutlet]="content" />
+  </button>
+}

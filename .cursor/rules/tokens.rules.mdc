@@ -1,0 +1,65 @@
+---
+alwaysApply: true
+---
+# tokens.rules.mdc
+
+### A. Purpose
+Define how design tokens are structured, referenced, and consumed across all Khwarizmi products. Tokens are the single source of truth for all visual values.
+
+### B. Rules
+- All design decisions (color, spacing, typography, radius, shadow, opacity) MUST be expressed as tokens.
+- Token naming convention: `--{category}-{namespace}-{role}-{modifier}` (e.g. `--color-sf-primary-opacity-8`).
+- Token categories:
+  - `color` — all color values
+  - `spacing` — all margin/padding values (defined in spacing.rules.md)
+  - `typography` — font size, weight, line-height
+  - `radius` — border radius values
+  - `shadow` — elevation shadows
+  - `opacity` — transparency levels
+  - `zindex` — layering system
+- Token sources:
+  - Light mode: `material3-tokens.json`
+  - Dark mode: `material3-dark-tokens.json`
+  - CSS variables: `css-variables.css`
+- CSS variable format uses comma-separated RGB values (e.g. `103,80,164`) — always wrap in `rgba()` when used in CSS.
+- Tokens with opacity suffix (e.g. `-opacity-8`) include the alpha value in their JSON definition — use them as-is.
+- Border radius token scale:
+  - `--radius-none`: 0px
+  - `--radius-xs`: 2px
+  - `--radius-sm`: 4px
+  - `--radius-md`: 8px
+  - `--radius-lg`: 12px
+  - `--radius-xl`: 16px
+  - `--radius-full`: 9999px (pills, avatars)
+- Elevation/shadow tokens:
+  - `--shadow-sm`: `0 1px 2px rgba(0,0,0,0.08)`
+  - `--shadow-md`: `0 2px 8px rgba(0,0,0,0.12)`
+  - `--shadow-lg`: `0 4px 16px rgba(0,0,0,0.16)`
+  - `--shadow-xl`: `0 8px 32px rgba(0,0,0,0.20)`
+- Tokens must never be overridden inline in component code.
+- New tokens require design system team approval before use.
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Reference tokens by their semantic name, not their value.
+- ✅ Use `--color-sf-primary` not `rgb(103,80,164)`.
+- ✅ Keep light and dark token sets in sync — every light token must have a dark counterpart.
+- ✅ Use opacity tokens for hover, pressed, disabled, and overlay states.
+- ✅ Use `--radius-md` (8px) as default for cards, inputs, buttons.
+
+**Don't:**
+- ❌ Do not hardcode any visual value that has a token equivalent.
+- ❌ Do not create component-local color variables.
+- ❌ Do not use box shadows outside the defined elevation scale.
+- ❌ Do not modify token values per product — tokens are shared system-wide.
+- ❌ Do not use opacity via `rgba()` directly when an opacity token exists.
+
+### D. MCP Usage Guidance
+- When generating components, resolve every color, spacing, radius, and shadow from the token files.
+- Map `material3-tokens.json` properties to CSS variable names by stripping the `$` prefix.
+- Wrap all color token values in `rgba(VAL, ALPHA)` when writing CSS.
+- When a dark mode context is detected (`.e-dark-mode`), switch to `material3-dark-tokens.json` values.
+- Flag any use case where no token exists — do not invent values.
+
+---

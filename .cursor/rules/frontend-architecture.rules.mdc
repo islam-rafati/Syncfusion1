@@ -1,0 +1,465 @@
+---
+description: Frontend architecture rules for Khwarizmi — file structure, feature organization, code standards, quality gates
+alwaysApply: true
+---
+
+# frontend-architecture.rules.mdc
+
+### A. Purpose
+Define the structural conventions, file organization, naming standards, and quality gates for all Khwarizmi Angular applications. A developer joining any Khwarizmi product must find identical architecture across all products.
+
+---
+
+### B. Project Structure
+
+```
+src/
+├── app/
+│   ├── app.component.ts          ← Root shell component
+│   ├── app.config.ts             ← Application config (providers, routes)
+│   ├── app.routes.ts             ← Root routes (all lazy-loaded)
+│   │
+│   ├── core/                     ← Singleton services — loaded once at app root
+│   │   ├── auth/
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.guard.ts
+│   │   │   └── auth.interceptor.ts
+│   │   ├── http/
+│   │   │   ├── api.service.ts
+│   │   │   └── error.interceptor.ts
+│   │   └── layout/
+│   │       ├── shell.component.ts
+│   │       ├── sidebar/
+│   │       └── appbar/
+│   │
+│   ├── shared/                   ← Reusable components/pipes/directives
+│   │   ├── components/
+│   │   │   ├── empty-state/
+│   │   │   ├── confirm-dialog/
+│   │   │   ├── page-header/
+│   │   │   └── status-badge/
+│   │   ├── pipes/
+│   │   │   ├── arabic-date.pipe.ts
+│   │   │   └── truncate.pipe.ts
+│   │   ├── directives/
+│   │   │   └── permission.directive.ts
+│   │   └── models/
+│   │       └── common.model.ts   ← Shared interfaces used across features
+│   │
+│   └── features/                 ← One folder per business domain
+│       ├── users/
+│       │   ├── users.routes.ts
+│       │   ├── users-list/
+│       │   │   ├── users-list.component.ts
+│       │   │   ├── users-list.component.html
+│       │   │   └── users-list.component.scss
+│       │   ├── user-detail/
+│       │   ├── user-form/
+│       │   ├── models/
+│       │   │   └── user.model.ts
+│       │   └── services/
+│       │       └── users.service.ts
+│       └── dashboard/
+│           ├── dashboard.component.ts
+│           ├── components/
+│           │   ├── kpi-card/
+│           │   ├── activity-chart/
+│           │   └── recent-records/
+│           ├── models/
+│           └── services/
+│
+├── assets/
+│   ├── locales/
+│   │   ├── ar.json
+│   │   └── en.json
+│   ├── icons/
+│   └── images/
+│
+└── styles/
+    ├── styles.scss               ← Global entry: imports tokens + Syncfusion CSS
+    ├── _tokens.scss              ← CSS custom properties (from token system)
+    ├── _typography.scss          ← Font declarations + type utility classes
+    ├── _spacing.scss             ← Spacing utility classes (optional)
+    ├── _breakpoints.scss         ← Responsive mixins
+    ├── _rtl.scss                 ← RTL-specific global overrides
+    └── _syncfusion-overrides.scss ← Global Syncfusion token overrides
+```
+
+---
+
+### C. Feature Folder Rules
+
+Every feature follows this exact internal structure:
+
+```
+features/feature-name/
+├── feature-name.routes.ts        ← Lazy-loaded child routes
+├── feature-name-list/            ← List/index view
+│   ├── feature-name-list.component.ts
+│   ├── feature-name-list.component.html
+│   └── feature-name-list.component.scss
+├── feature-name-detail/          ← Read-only detail view
+├── feature-name-form/            ← Create + Edit form (unified)
+├── components/                   ← Feature-private sub-components
+│   ├── feature-filter-bar/
+│   ├── feature-stat-card/
+│   └── feature-action-menu/
+├── models/
+│   └── feature-name.model.ts
+└── services/
+    └── feature-name.service.ts
+```
+
+**Rules:**
+- Feature components are never imported directly by other features — only shared components are.
+- Cross-feature navigation uses the router — never direct component imports between features.
+- A feature's service is `providedIn: 'root'` only if it holds shared state. Otherwise scope to the feature route.
+- Delete the `components/` subfolder if the feature has no private sub-components — no empty folders.
+
+---
+
+### D. Naming Conventions
+
+| Artifact | Convention | Example |
+|---|---|---|
+| Component selector | `app-` prefix + kebab-case | `app-user-card` |
+| Component class | PascalCase + `Component` suffix | `UserCardComponent` |
+| Service class | PascalCase + `Service` suffix | `UsersService` |
+| Interface | PascalCase, no prefix | `User`, `GridColumnConfig` |
+| Type alias | PascalCase | `UserRole`, `SortDirection` |
+| Signal | camelCase noun | `selectedUser`, `isLoading`, `pageTitle` |
+| Computed signal | camelCase noun (no `get` prefix) | `filteredUsers`, `totalCount` |
+| Event handler method | `on` + PascalCase action | `onUserSelect`, `onFilterChange`, `onSave` |
+| Private method | camelCase | `loadData`, `buildGridColumns` |
+| CSS class (BEM block) | feature name | `.user-card` |
+| CSS class (BEM element) | `__element` | `.user-card__avatar` |
+| CSS class (BEM modifier) | `--modifier` | `.user-card--compact` |
+| CSS variable | kebab-case semantic | `--color-sf-primary`, `--spacing-md` |
+| File name | kebab-case matching selector | `user-card.component.ts` |
+| Route path | kebab-case | `/user-management/create` |
+
+---
+
+### E. Component Architecture Patterns
+
+#### List Page
+```typescript
+// Responsibilities: display list, filtering, sorting, bulk actions, open dialogs
+// Does NOT: contain form logic, business rules, direct HTTP calls
+
+export class UsersListComponent {
+  // Data from service — signals
+  readonly users = signal<User[]>([]);
+  readonly isLoading = signal(false);
+
+  // Filter state
+  readonly searchQuery = signal('');
+  readonly statusFilter = signal<UserStatus | null>(null);
+
+  // Derived — never duplicated
+  readonly filteredUsers = computed(() => {
+    const q = this.searchQuery().toLowerCase();
+    const status = this.statusFilter();
+    return this.users().filter(u =>
+      (!q || u.name.toLowerCase().includes(q)) &&
+      (!status || u.status === status)
+    );
+  });
+
+  // Grid-compatible data shape
+  readonly gridData = computed(() => this.filteredUsers());
+
+  // Dialog state
+  readonly createDialogOpen = signal(false);
+  readonly deleteTargetId = signal<string | null>(null);
+
+  private readonly usersService = inject(UsersService);
+
+  ngOnInit(): void {
+    this.isLoading.set(true);
+    this.usersService.getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: users => { this.users.set(users); this.isLoading.set(false); },
+        error: () => this.isLoading.set(false),
+      });
+  }
+
+  onUserSelect(user: User): void { /* open detail */ }
+  onCreateOpen(): void { this.createDialogOpen.set(true); }
+  onDeleteRequest(id: string): void { this.deleteTargetId.set(id); }
+  onDeleteConfirm(): void { /* call service */ }
+}
+```
+
+#### Form Component
+```typescript
+// Responsibilities: collect input, validate, emit result
+// Does NOT: save to API (delegates to parent via output), know about list state
+
+export class UserFormComponent {
+  @Input() user: User | null = null;  // null = create mode, User = edit mode
+  @Output() saved = new EventEmitter<User>();
+  @Output() cancelled = new EventEmitter<void>();
+
+  // Form state as signals
+  readonly name = signal('');
+  readonly email = signal('');
+  readonly role = signal<UserRole>('viewer');
+  readonly isSaving = signal(false);
+
+  // Validation state
+  readonly errors = signal<Partial<Record<keyof User, string>>>({});
+
+  readonly isEditMode = computed(() => this.user !== null);
+
+  ngOnInit(): void {
+    if (this.user) {
+      this.name.set(this.user.name);
+      this.email.set(this.user.email);
+      this.role.set(this.user.role);
+    }
+  }
+
+  onSubmit(): void {
+    if (!this.validate()) return;
+    // emit — parent handles the service call
+    this.saved.emit({ name: this.name(), email: this.email(), role: this.role() } as User);
+  }
+
+  private validate(): boolean { /* ... */ return true; }
+}
+```
+
+#### Service
+```typescript
+// Responsibilities: HTTP, data transformation, caching
+// Does NOT: hold UI state, know about component structure
+
+@Injectable({ providedIn: 'root' })
+export class UsersService {
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = inject(API_BASE_URL);
+
+  getAll(): Observable<User[]> {
+    return this.http.get<ApiResponse<User[]>>(`${this.baseUrl}/users`)
+      .pipe(map(r => r.data));
+  }
+
+  getById(id: string): Observable<User> {
+    return this.http.get<ApiResponse<User>>(`${this.baseUrl}/users/${id}`)
+      .pipe(map(r => r.data));
+  }
+
+  create(payload: CreateUserPayload): Observable<User> {
+    return this.http.post<ApiResponse<User>>(`${this.baseUrl}/users`, payload)
+      .pipe(map(r => r.data));
+  }
+
+  update(id: string, payload: Partial<User>): Observable<User> {
+    return this.http.patch<ApiResponse<User>>(`${this.baseUrl}/users/${id}`, payload)
+      .pipe(map(r => r.data));
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
+  }
+}
+```
+
+---
+
+### F. Shared Components — Required for Every Product
+
+These shared components must exist in `shared/components/` in every Khwarizmi product:
+
+| Component | Selector | Purpose |
+|---|---|---|
+| Empty state | `app-empty-state` | Standardized empty state with icon, title, description, CTA |
+| Confirm dialog | `app-confirm-dialog` | Wraps `ejs-dialog` Confirm — used for all destructive actions |
+| Page header | `app-page-header` | Page title + breadcrumb + page-level actions |
+| Status badge | `app-status-badge` | `ejs-badge` or `ejs-chip` mapped from status enum → color |
+| Skeleton card | `app-skeleton-card` | Composed `ejs-skeleton` blocks for card loading states |
+| Toast service | `ToastService` | Service wrapping `ejs-toast` — `showSuccess()`, `showError()`, `showWarning()` |
+
+```typescript
+// shared/components/empty-state/empty-state.component.ts
+export class EmptyStateComponent {
+  @Input() icon = 'e-icons e-folder-open';
+  @Input() title = 'لا توجد بيانات';
+  @Input() description = '';
+  @Input() actionLabel = '';
+  @Output() action = new EventEmitter<void>();
+  readonly hasAction = computed(() => !!this.actionLabel);
+}
+```
+
+```typescript
+// shared/services/toast.service.ts
+@Injectable({ providedIn: 'root' })
+export class ToastService {
+  private toastRef: ToastComponent | null = null;
+
+  register(toast: ToastComponent): void { this.toastRef = toast; }
+
+  showSuccess(message: string): void {
+    this.toastRef?.show({ content: message, cssClass: 'e-toast-success' });
+  }
+
+  showError(message: string): void {
+    this.toastRef?.show({ content: message, cssClass: 'e-toast-danger' });
+  }
+
+  showWarning(message: string): void {
+    this.toastRef?.show({ content: message, cssClass: 'e-toast-warning' });
+  }
+}
+```
+
+---
+
+### G. SCSS Architecture
+
+```scss
+// styles/styles.scss — global entry point (imports only)
+@import '@syncfusion/ej2/material3.css';
+@import 'tokens';
+@import 'typography';
+@import 'breakpoints';
+@import 'rtl';
+@import 'syncfusion-overrides';
+
+// Base resets
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 16px; }
+body { margin: 0; font-family: var(--font-family-body); }
+
+// Screen reader only utility
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Skip link
+.skip-link {
+  position: absolute;
+  inset-block-start: -40px;
+  inset-inline-start: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-sf-primary);
+  color: var(--color-sf-on-primary);
+  z-index: 9999;
+  &:focus { inset-block-start: 0; }
+}
+```
+
+```scss
+// styles/_breakpoints.scss
+$breakpoints: (
+  'mobile':  0px,
+  'tablet':  600px,
+  'desktop': 1024px,
+  'wide':    1440px,
+);
+
+@mixin respond-to($bp) {
+  @media (min-width: map-get($breakpoints, $bp)) { @content; }
+}
+
+@mixin respond-below($bp) {
+  @media (max-width: calc(map-get($breakpoints, $bp) - 1px)) { @content; }
+}
+```
+
+```scss
+// styles/_rtl.scss — global RTL adjustments beyond Syncfusion's auto-handling
+[dir="rtl"] {
+  // text-align defaults
+  .text-start { text-align: right; }
+  .text-end   { text-align: left; }
+
+  // Icons that need explicit flip
+  .icon-directional {
+    transform: scaleX(-1);
+  }
+}
+```
+
+---
+
+### H. Quality Gates
+
+Run this checklist before outputting any Angular artifact.
+
+**Architecture:**
+- [ ] All components are standalone with `ChangeDetectionStrategy.OnPush`
+- [ ] No `any` types — zero tolerance
+- [ ] All data shapes have interfaces in a `models/` file
+- [ ] Business logic is in a service, not the component
+- [ ] Components are under size limits (150 lines template, 120 lines TS logic)
+- [ ] No duplicated code — extracted to shared components or services
+
+**Syncfusion:**
+- [ ] Every UI element mapped to a Syncfusion component (or explicitly justified)
+- [ ] Syncfusion modules imported in the component's `imports[]` array
+- [ ] Grid components have required service providers
+- [ ] `[property]` binding used — not HTML attributes
+
+**Styling:**
+- [ ] No hardcoded colors, spacing, or font sizes
+- [ ] All values use `--color-sf-*`, `--spacing-*`, or other token variables
+- [ ] No inline `style=""` attributes
+- [ ] `::ng-deep` scoped inside `:host`
+- [ ] Logical CSS properties used (`padding-inline-start` not `padding-left`)
+
+**RTL & Localization:**
+- [ ] `enableRtl(true)` set in `main.ts`
+- [ ] `<html dir="rtl" lang="ar">` on root element
+- [ ] No manual `direction: rtl` on individual components
+- [ ] Arabic locale loaded via `L10n.load()`
+
+**Accessibility:**
+- [ ] Icon-only buttons have `aria-label`
+- [ ] Form fields have labels (visible or `aria-label`)
+- [ ] No `tabindex` overrides on Syncfusion components
+- [ ] Syncfusion ARIA attributes not removed
+- [ ] Skip link present in shell layout
+
+**Responsiveness:**
+- [ ] Layout works at 375px, 600px, 1024px, 1440px
+- [ ] No fixed pixel widths on content containers
+- [ ] Sidebar collapses on tablet, hides on mobile
+- [ ] Touch targets ≥ 44×44px
+
+**Code Quality:**
+- [ ] No `console.log` in final output
+- [ ] No commented-out code blocks
+- [ ] Lazy-loaded routes — no eager feature imports
+- [ ] `takeUntilDestroyed` on all RxJS subscriptions in components
+
+---
+
+### I. Do / Don't Summary
+
+**Do:**
+- ✅ Follow the project structure exactly — no ad-hoc folders
+- ✅ One feature = one folder under `features/`
+- ✅ Shared components in `shared/` — feature components in `features/`
+- ✅ `core/` for singletons only (auth, HTTP, shell layout)
+- ✅ Match file names to selector names exactly
+- ✅ Run the quality gate checklist before every output
+
+**Don't:**
+- ❌ Do not put components in `app/` root — they belong in `core/`, `shared/`, or `features/`
+- ❌ Do not import one feature's components into another feature
+- ❌ Do not put HTTP calls in components
+- ❌ Do not create top-level barrel files (`index.ts`) in features — use direct imports
+- ❌ Do not store derived data in a signal when `computed()` would do the job
+- ❌ Do not create empty folders as placeholders

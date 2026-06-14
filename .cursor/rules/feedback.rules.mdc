@@ -1,0 +1,80 @@
+---
+alwaysApply: false
+---
+
+# feedback.rules.md
+
+### A. Purpose
+Standardize all system feedback patterns using Syncfusion UI Kit — Material-3 Theme components exclusively.
+
+### B. Rules
+
+**Component → Use Case Mapping:**
+- `SfToast` → transient, non-blocking post-action feedback. Auto-dismiss 4–6 seconds. Position: bottom-left (RTL default — `position: { X: 'Left', Y: 'Bottom' }`)
+- `SfMessage` → persistent inline contextual alerts within page content. Do not auto-dismiss.
+- `SfBadge` → count and status indicators on navigation items and avatars only.
+- `SfProgressBar` → determinate or indeterminate long-running operations.
+- `SfSkeleton` → ALL loading states for content areas. Never show empty containers.
+- `SfSpinner` → small, localized loading: button loading state, inline action only.
+- `SfDialog` (Confirm variant / Predefined) → destructive action confirmation (delete, discard, logout).
+
+**Semantic Role Mapping:**
+- Success → `SfToast`/`SfMessage` with `cssClass='e-success'` + `--color-sf-success-container`
+- Warning → `cssClass='e-warning'` + `--color-sf-warning-container`
+- Error/Danger → `cssClass='e-error'` + `--color-sf-error-container`
+- Info → `cssClass='e-info'` + `--color-sf-info-container`
+
+**Validation Feedback:**
+- Inline validation below field via `FormValidator` — Body Small (12px), error color token
+- Validate on blur and on form submit — not on every keystroke
+- Error messages: describe what is wrong AND how to fix it. Never "Invalid input."
+- Required field marker: `*` after label text
+- Form-level errors on submit: `SfMessage` (error variant) at top of form
+
+**Empty States:**
+- Every empty state: icon + title + description + primary `SfButton` action
+- Constructive message — explain why empty and what user can do
+- Never display raw "No data" text
+- Use `SfSkeleton` during loading before the empty state is confirmed
+
+**Error States:**
+- Network/API errors: `SfMessage` (error) with retry `SfButton`
+- 404: custom page with `SfButton` back to safe location
+- Table/grid errors: inline `SfMessage` above `SfGrid` or row-level template
+- Never display raw error codes or stack traces
+
+**Loading States:**
+- Content areas: `SfSkeleton` — always
+- Button actions: `SfSpinner` inside `SfButton` + disable button
+- Page-level bulk operations: `SfProgressBar` with percentage or step label
+- Real-time status: `SfBadge` updates or `SfToast` — never rely on page refresh
+
+**SfToast Stacking:**
+- Maximum 3 simultaneous toasts — queue overflow beyond that
+- Use `newestOnTop: true` for stacking order
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Use `SfToast` for all post-action feedback (save, create, delete confirmed).
+- ✅ Use `SfSkeleton` during ALL content loading states.
+- ✅ Provide actionable error messages via `FormValidator` and `SfMessage`.
+- ✅ Use `SfDialog` Confirm variant before any irreversible action.
+- ✅ Apply `cssClass` semantic variants (`e-success`, `e-error`, `e-warning`, `e-info`).
+
+**Don't:**
+- ❌ Do not use browser `alert()` or `confirm()` dialogs.
+- ❌ Do not show empty containers without `SfSkeleton` or empty state.
+- ❌ Do not stack more than 3 `SfToast` simultaneously.
+- ❌ Do not use `e-warning` for errors or `e-info` for success.
+- ❌ Do not validate on every keystroke — blur/submit only.
+- ❌ Do not display technical error messages or stack traces to users.
+- ❌ Do not use `SfSpinner` for full content area loading — use `SfSkeleton`.
+
+### D. MCP Usage Guidance
+- When generating forms, always include `FormValidator` with error state variants.
+- When generating loading states, auto-insert `SfSkeleton` for all content containers.
+- When generating action buttons (delete, submit), auto-pair with `SfDialog` Confirm variant.
+- Map feedback intent to Syncfusion component + cssClass: saved → `SfToast e-success`, failed → `SfMessage e-error`, processing → `SfProgressBar`.
+- Always generate empty state treatment alongside any `SfGrid`, `SfListView`, or data container.
+- Reference Syncfusion Material-3 toast/message specs from Figma Kit for sizing and spacing.

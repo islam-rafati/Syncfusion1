@@ -1,0 +1,201 @@
+:host {
+  display: block;
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  // White surface fill behind all rows, with rounded card edges.
+  // No outer border (Figma uses row dividers only) to keep height exact.
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  // ─── Column widths (exact Figma cell sizes) ───────────────────────
+  &__col-lang { width: 74px; }
+  &__col-date { width: 100px; }
+  &__col-source { width: 84px; }
+  &__col-participants { width: 86px; }
+  &__col-status { width: 88px; }
+  &__col-favorite { width: 58px; }
+  &__col-reports { width: 52px; }
+  &__col-actions { width: 48px; }
+  // name column takes the remaining space (~406px).
+
+  // ─── Header row: lavender surface, 44px ───────────────────────────
+  &__head {
+    background-color: rgb(var(--color-sf-surface-variant));
+  }
+
+  &__th {
+    height: 44px;
+    padding-inline: var(--spacing-sm);
+    text-align: start;
+    font-size: var(--typo-size-text-sm); // 12px
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+
+    &--center { text-align: center; }
+
+    &:first-child { padding-inline-start: var(--spacing-md); }
+    &:last-child { padding-inline-end: var(--spacing-md); }
+  }
+
+  // ─── Data rows: 52px, divider underline ───────────────────────────
+  &__row {
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  &__td {
+    height: 52px;
+    padding-inline: var(--spacing-sm);
+    font-size: var(--typo-size-text-md); // 14px
+    color: var(--color-text-primary);
+    vertical-align: middle;
+
+    &--center { text-align: center; }
+
+    &:first-child { padding-inline-start: var(--spacing-md); }
+    &:last-child { padding-inline-end: var(--spacing-md); }
+  }
+
+  // Survey name: emphasized dark text, forced LTR + left aligned.
+  &__name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    direction: ltr;
+    text-align: left;
+  }
+
+  // Date columns: muted secondary text.
+  &__muted {
+    color: var(--color-text-secondary);
+  }
+
+  // Data-source glyph color.
+  &__source {
+    color: var(--color-icon-default);
+  }
+}
+
+// Languages badge: subtle light-blue pill with blue text.
+.lang-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-full);
+  background-color: rgb(var(--color-sf-info-container));
+  color: rgb(var(--color-sf-info));
+  font-size: var(--typo-size-text-sm); // 12px
+  font-weight: var(--font-weight-medium);
+}
+
+// Status badge variants.
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--typo-size-text-sm); // 12px
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+
+  &--success {
+    background-color: rgb(var(--color-sf-success-container));
+    color: rgb(var(--color-sf-success));
+  }
+  &--warning {
+    background-color: rgb(var(--color-sf-warning-container));
+    color: rgb(var(--color-sf-warning));
+  }
+  &--info {
+    background-color: rgb(var(--color-sf-info-container));
+    color: rgb(var(--color-sf-info));
+  }
+  // Closed: plain neutral text, no fill.
+  &--plain {
+    padding: 0;
+    color: var(--color-text-secondary);
+  }
+}
+
+// Actions cell anchors the overflow menu.
+.grid__actions {
+  position: relative;
+  overflow: visible;
+}
+
+// Transparent full-screen layer to catch outside clicks.
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+// Overflow (three-dots) menu: white rounded card, dropped below the button.
+.menu {
+  position: absolute;
+  inset-block-start: calc(50% + 16px);
+  inset-inline-end: var(--spacing-sm);
+  z-index: 50;
+  width: 188px;
+  padding: var(--spacing-1);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  text-align: start;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+    height: 32px;
+    padding-inline: var(--spacing-sm);
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: transparent;
+    color: var(--color-text-primary);
+    font-size: var(--typo-size-text-md); // 14px
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover { background-color: rgba(var(--color-sf-on-surface), 0.06); }
+
+    // Move to Trash: red text + icon, separated by a top divider.
+    &--danger {
+      margin-block-start: var(--spacing-1);
+      border-top: 1px solid var(--color-border-subtle);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      color: rgb(var(--color-sf-error));
+
+      &:hover { background-color: rgba(var(--color-sf-error), 0.08); }
+    }
+  }
+}
+
+// Icon action buttons inside cells.
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover { background-color: rgba(var(--color-sf-on-surface), 0.06); }
+
+  // Favorited star = primary purple.
+  &--fav { color: var(--color-brand); }
+
+  // Report icon = primary purple.
+  &--report { color: var(--color-brand); }
+}

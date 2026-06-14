@@ -1,0 +1,64 @@
+// ============================================================
+// Angular Material M3 Theme — Khwarizmi
+//
+// IMPORTANT: Angular Material is not installed in this workspace
+// yet. Once you run:
+//
+//   npm install @angular/material @angular/cdk @angular/animations
+//
+// uncomment the @use + mat.theme block below to generate the M3
+// system tokens (--mat-sys-*). The CSS-variable overrides further
+// down bind Material's system tokens to Khwarizmi design tokens and
+// are SAFE to keep active even before Material is installed (they are
+// plain custom properties with no effect until Material reads them).
+//
+// Rule: the primary palette must resolve to var(--color-primary)
+// (#12A89E). Never hardcode hex values here — always use tokens.
+// ============================================================
+
+// ── Enable after installing Angular Material ───────────────
+// @use '@angular/material' as mat;
+//
+// html {
+//   // Generate the base M3 system tokens (structure only).
+//   @include mat.theme((
+//     color: (
+//       theme-type: light,
+//       primary: mat.$cyan-palette,   // closest built-in base to our teal
+//       tertiary: mat.$teal-palette,
+//     ),
+//     typography: (
+//       plain-family: var(--font-sans),
+//       brand-family: var(--font-sans),
+//       bold-weight: 700,
+//       regular-weight: 400,
+//     ),
+//     density: 0,
+//   ));
+// }
+
+// ── Bind Material system tokens to Khwarizmi design tokens ──
+// These centralize all brand theming in one place and stay
+// hardcode-free. They take effect once Material is installed
+// and the theme block above is enabled.
+:root {
+  // Primary brand color drives buttons, toggles, active states.
+  --mat-sys-primary: var(--color-primary);
+  --mat-sys-on-primary: var(--color-text-oncolor);
+  --mat-sys-primary-container: var(--color-bg-primary-50);
+  --mat-sys-on-primary-container: var(--color-text-teal);
+
+  // Surfaces / backgrounds.
+  --mat-sys-surface: var(--color-bg-white);
+  --mat-sys-on-surface: var(--color-text-default);
+  --mat-sys-surface-variant: var(--color-bg-neutral);
+  --mat-sys-on-surface-variant: var(--color-text-secondary);
+
+  // Outlines / borders.
+  --mat-sys-outline: var(--color-border-neutral-primary);
+  --mat-sys-outline-variant: var(--color-border-neutral-secondary);
+
+  // Error state.
+  --mat-sys-error: var(--color-bg-error);
+  --mat-sys-on-error: var(--color-text-oncolor);
+}

@@ -1,0 +1,107 @@
+---
+alwaysApply: false
+---
+
+# patterns.rules.mdc
+
+### A. Purpose
+Define reusable UI patterns for common enterprise workflows in Khwarizmi, implemented exclusively with Syncfusion UI Kit — Material-3 Theme components.
+
+### B. Rules
+
+**Principle:**
+- Check for an existing Khwarizmi pattern before building any new UI flow.
+- All patterns are implemented using Syncfusion Material-3 components only.
+- New patterns require design system team approval and documentation.
+
+---
+
+**1. Master-Detail Pattern**
+- List: `SfGrid` or `SfListView`
+- Detail: `SfSplitter` (right panel = list, left panel = detail in RTL)
+- Detail slides in via `SfSplitter` resize — never replaces the list
+- Detail panel uses `SfCard` layout internally
+
+**2. Dashboard Pattern**
+- Row 1: KPI `SfCard` components (max 4–6, using `SfDashboardLayout`)
+- Row 2: `SfChart` / `SfAccumulationChart`
+- Row 3: `SfGrid` or secondary visualizations
+- Row 4+: supplementary content, `SfTimeline`, activity feeds
+- Top controls: date range `SfDateRangePicker`, refresh `SfButton`, export `SfButton`
+- Loading: `SfSkeleton` for all cards and charts
+- Container: `SfDashboardLayout` for drag-resize panels
+
+**3. CRUD Pattern**
+- Read: `SfGrid` with `SfBadge` status column
+- Create: `SfDialog` (simple, ≤ 10 fields) or new page (complex)
+- Update: `SfInPlaceEditor` (single field) or `SfDialog` / page (multi-field)
+- Delete: always `SfDialog` Confirm variant first
+- Post-action: `SfToast` with semantic cssClass for all CRUD operations
+
+**4. Search and Filter Pattern**
+- Search: `SfAutoComplete` or `SfTextBox` with search icon above content
+- Filters: `SfDropDownList`, `SfMultiSelect`, or `SfChip` inline above content
+- Active filters: dismissible `SfChip` items below filter bar
+- Filter count: `SfBadge` on filter toggle `SfButton`
+- Clear all: always provide a clear `SfButton`
+
+**5. Wizard / Multi-Step Pattern**
+- Component: `SfStepper`
+- Each step validates before advancing (use `FormValidator`)
+- Back `SfButton` always enabled except first step
+- Summary review step before final submit
+- `SfStepper` progress visible at all times
+- Navigation: Back / Next / Submit using `SfButton` variants
+
+**6. Report Viewer Pattern**
+- Structure: Executive Summary → KPIs (`SfCard`) → `SfChart` trends → `SfGrid` breakdowns → Export
+- Filter panel: `SfSplitter` collapsible side panel or `SfToolbar` top bar
+- Export: `SfGrid` export toolbar + `SfButton` for PDF via `SfPdfViewer`
+- Print: clean layout without `SfSidebar` and `SfAppBar` chrome
+
+**7. Empty State Pattern**
+- Icon (from Syncfusion icon set or custom SVG)
+- Title: H3 style
+- Description: Body Medium
+- Primary action: `SfButton` (Contained variant)
+
+**8. Loading State Pattern**
+- Content areas: `SfSkeleton` (always)
+- Buttons/inline: `SfSpinner` inside `SfButton`
+- Page-level operations: `SfProgressBar` with status label
+
+**9. Error State Pattern**
+- Field errors: `FormValidator` inline below field
+- Form-level: `SfMessage` (e-error) at top of form
+- Page-level: full-area `SfMessage` with retry `SfButton`
+- Network: `SfToast` (transient) or `SfMessage` (persistent)
+
+**10. Confirmation Pattern**
+- Destructive (delete/discard): `SfDialog` Confirm variant with danger-style `SfButton`
+- Non-destructive (publish/submit): `SfToast` success post-action (no pre-confirmation)
+
+### C. Do / Don't
+
+**Do:**
+- ✅ Apply Dashboard Pattern with `SfDashboardLayout` to all overview/home screens.
+- ✅ Apply CRUD Pattern to all entity management screens.
+- ✅ Use `SfStepper` for all onboarding and multi-stage configuration.
+- ✅ Show active filters as dismissible `SfChip` items.
+- ✅ Always use `SfDialog` Confirm before destructive actions.
+- ✅ Use `SfSplitter` for Master-Detail layouts.
+
+**Don't:**
+- ❌ Do not invent new patterns when an existing one applies.
+- ❌ Do not navigate away from list in Master-Detail — use `SfSplitter` panel.
+- ❌ Do not skip the summary/review step in `SfStepper` wizards.
+- ❌ Do not auto-delete without `SfDialog` confirmation.
+- ❌ Do not use raw `<div>` loading placeholders — use `SfSkeleton`.
+- ❌ Do not use any non-Syncfusion component in pattern implementations.
+
+### D. MCP Usage Guidance
+- When generating a screen, identify its pattern type and apply the Syncfusion component stack automatically.
+- For Dashboard screens: `SfDashboardLayout` + `SfCard` KPIs + `SfChart` + `SfGrid`.
+- For CRUD screens: `SfGrid` + `SfDialog` + `SfToast` + `FormValidator`.
+- For Wizard screens: `SfStepper` + `FormValidator` per step + `SfButton` nav controls.
+- For Search/Filter: `SfAutoComplete` + `SfMultiSelect` + dismissible `SfChip` active filters.
+- When request doesn't match any pattern, flag for design team review — do not improvise.

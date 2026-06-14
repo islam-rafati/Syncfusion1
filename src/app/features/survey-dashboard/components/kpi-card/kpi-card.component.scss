@@ -1,0 +1,99 @@
+// KPI tile. Fills its grid track; fixed 160px tall to match the Figma frame.
+:host {
+  display: block;
+  height: 100%;
+}
+
+// Outer: 2px colored bar + card, clipped by the 12px radius.
+.kpi {
+  display: flex;
+  height: 160px;
+  border-radius: var(--radius-lg); // 12px
+  overflow: hidden;
+
+  // 2px full-height accent bar (color set by semantic modifier below).
+  &__bar {
+    flex-shrink: 0;
+    width: 2px;
+    background-color: rgb(var(--color-sf-outline));
+  }
+
+  // White card body.
+  &__card {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--spacing-md); // 16px icon → text
+    padding: var(--spacing-md); // 16px
+    background-color: var(--color-bg-surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  // Bare icon (no container), colored by semantic.
+  &__icon {
+    display: inline-flex;
+    color: rgb(var(--color-sf-on-surface-variant));
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md); // 16px head → desc
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); // 8px title → value
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 13px; // Figma: Roboto Medium 13/20
+    line-height: 20px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  // Primary value — 32px bold with a tight 20px line box (keeps card at 160).
+  &__value {
+    margin: 0;
+    font-size: 32px;
+    line-height: 20px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    white-space: nowrap;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 11px; // Figma: Roboto Regular 11/20
+    line-height: 20px;
+    color: var(--color-text-secondary);
+  }
+}
+
+// ─── Semantic accents: bar + icon glyph color ──────────────────────────
+.kpi--success {
+  .kpi__bar { background-color: rgb(var(--color-sf-success)); }
+  .kpi__icon { color: rgb(var(--color-sf-success)); }
+}
+
+.kpi--warning {
+  .kpi__bar { background-color: rgb(var(--color-sf-warning)); }
+  .kpi__icon { color: rgb(var(--color-sf-warning)); }
+}
+
+.kpi--danger {
+  .kpi__bar { background-color: rgb(var(--color-sf-danger)); }
+  .kpi__icon { color: rgb(var(--color-sf-danger)); }
+}
+
+.kpi--primary {
+  .kpi__bar { background-color: var(--color-brand); }
+  .kpi__icon { color: var(--color-brand); }
+}
+
+// neutral keeps the default outline-gray bar + gray icon.

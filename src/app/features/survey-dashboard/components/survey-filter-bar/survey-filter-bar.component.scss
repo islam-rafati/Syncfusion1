@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4); // 12px between search and chips (Figma: 40→52)
+
+  // Search field: full width, 40px tall, leading icon.
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    height: 40px;
+    padding-inline: var(--spacing-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+
+    &:focus-within {
+      border-color: var(--color-brand);
+    }
+  }
+
+  &__input {
+    flex: 1 1 auto;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: var(--typo-size-text-md); // 14px
+    color: var(--color-text-primary);
+
+    &::placeholder {
+      color: var(--color-text-disabled);
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+}
+
+// Filter chip: 24px pill, leading icon, outlined; active = filled primary.
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs); // 4px icon → label (Figma compact chip)
+  height: 24px;
+  padding-inline: var(--spacing-sm); // 8px
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--typo-size-text-sm); // 12px
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: rgba(var(--color-sf-on-surface), 0.06);
+  }
+
+  &--active,
+  &--active:hover {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: var(--color-text-on-primary);
+  }
+}
