@@ -100,6 +100,8 @@ This project follows an AI-native development workflow where Cursor AI, Figma MC
 
 The goal is to establish a repeatable Design-to-Code process that transforms Figma designs into production-ready Angular applications with minimal manual translation effort.
 
+---
+
 ### Prompts
 
 Act as lead Angular architect for Khwarizmi.
